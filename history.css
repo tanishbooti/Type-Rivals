@@ -1,0 +1,91 @@
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000000; 
+    color: #ffffff; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+}
+
+
+.container {
+    width: 90%;
+    max-width: 1000px;
+    text-align: center;
+    padding: 20px;
+    background: #000000;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1); 
+}
+
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+
+.history-grid {
+    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+
+.contest-card {
+    background-color: #121212; 
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    text-align: left;
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 25vw;
+}
+
+.contest-card h3 {
+    margin: 0;
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: chartreuse; 
+}
+
+.contest-card p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+
+.contest-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.3);
+}
+
+
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background: chartreuse;
+    color: #000000;
+    font-weight: bold;
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 255, 0, 0.5);
+}
+

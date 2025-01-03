@@ -1,0 +1,154 @@
+
+body {
+    font-family: 'Poppins', sans-serif; 
+    background-color: #1c1c1c;
+    color: #f3f3f3;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+#battleground-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 50px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+}
+
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+
+
+
+#user-status {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #ccc;
+}
+
+
+#battlegrounds-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.battleground-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    width: 100%;
+    padding: 40px;
+    border-radius: 10px;
+    border: 1px solid #fff;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+    font-weight: 400; 
+}
+
+
+.battleground-card:nth-child(1) {
+    background: linear-gradient(135deg, #ff5f6d, #ffc3a0); 
+}
+.battleground-card:nth-child(2) {
+    background: linear-gradient(135deg, #6a11cb, #2575fc); 
+}
+.battleground-card:nth-child(3) {
+    background: linear-gradient(135deg, #ffb347, #ffcc33); 
+}
+.battleground-card:nth-child(4) {
+    background: linear-gradient(135deg, #00c6ff, #0072ff); 
+}
+.battleground-card:nth-child(5) {
+    background: linear-gradient(135deg, #34e89e, #0f9b8e); 
+}
+.battleground-card:nth-child(6) {
+    background: linear-gradient(135deg, #f76b1c, #ffaf7b);
+}
+.battleground-card:nth-child(7) {
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); 
+}
+.battleground-card:nth-child(8) {
+    background: linear-gradient(135deg, #8e44ad, #f39c12); 
+}
+.battleground-card:nth-child(9) {
+    background: linear-gradient(135deg, #e67e22, #d35400); 
+}
+.battleground-card:nth-child(10) {
+    background: linear-gradient(135deg, #16a085, #1abc9c); 
+}
+
+
+.battleground-card:hover {
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.8);
+    transform: scale(1.05);
+}
+
+
+.battleground-card.darkened {
+    opacity: 0.4;
+}
+
+
+@keyframes gradient {
+    0% {
+        background: linear-gradient(90deg, rgba(255, 85, 85, 1) 0%, rgba(0, 255, 255, 1) 100%);
+    }
+    50% {
+        background: linear-gradient(90deg, rgba(0, 255, 255, 1) 0%, rgba(255, 85, 85, 1) 100%);
+    }
+    100% {
+        background: linear-gradient(90deg, rgba(255, 85, 85, 1) 0%, rgba(0, 255, 255, 1) 100%);
+    }
+}
+
+
+.battleground-name {
+    font-size: 1.7em;
+    font-weight: 500;
+    color: #f1f1f1;
+}
+
+
+.battleground-info {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #ddd;
+    font-weight: 300;
+}
+
+
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    color: #f1f1f1;
+    animation: spin 2s infinite linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

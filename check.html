@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Checker</title>
+    <link rel="icon" href="typelogo.jpeg" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="check.css">
+</head>
+<body>
+    <audio src="boom.wav"></audio>
+    <img src="typelogo.jpeg">
+  <div class="h1">
+    <h1> Press the keys and see if it's working properly or not.</h1>
+  </div>
+  <div class="testingwindow">
+    <h2> Whatever you press will be visible here!</h2>
+    <h4><input placeholder="Enter a key"></h4>
+    <script>
+        let inp= document.querySelector('input');
+        let test= document.querySelector('h2');
+        let sound=document.querySelector('audio');
+        inp.addEventListener('keypress',()=>{
+            sound.currentTime=0;
+            sound.play();
+            test.innerText=inp.value;
+            inp.value='';
+        });
+    </script>
+  </div>
+</body>
+</html>

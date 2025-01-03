@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" href="/Users/tanishbooti/Desktop/webd/sample/assets/typelogo.jpeg">
+    <link rel="stylesheet" href="signup.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="text" id="name" placeholder="Full Name" required>
+            <input type="text" id="city" placeholder="City" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Set Password" required>
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            <button type="submit" class="submit">Create Account</button>
+        </form>
+        <p class="error-message" id="error-message"></p>
+        <p>Already have an account? <a href="login.html">Log In</a></p>
+    </div>
+    <div class="modal" id="popup-modal">
+        <div class="modal-content">
+            <h3>Congratulations!</h3>
+            <p>You have entered the battleground. Prepare yourself for the adventure ahead!</p>
+            <button id="close-modal">Thank you!</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+    authDomain: "type-rivals-73388.firebaseapp.com",
+    projectId: "type-rivals-73388",
+    storageBucket: "type-rivals-73388.appspot.com",
+    messagingSenderId: "720102342621",
+    appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+    measurementId: "G-3KW6XR5BQR"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+
+const form = document.getElementById('signup-form');
+const modal = document.getElementById('popup-modal');
+const closeModal = document.getElementById('close-modal');
+const passwordInput = document.getElementById('password');
+const confirmPasswordInput = document.getElementById('confirm-password');
+const errorMessage = document.getElementById('error-message');
+
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+ 
+    const name = document.getElementById('name').value;
+    const city = document.getElementById('city').value;
+    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value;
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+
+  
+    if (password !== confirmPassword) {
+        errorMessage.textContent = "Passwords do not match. Please try again.";
+        return;
+    }
+    errorMessage.textContent = ""; 
+
+    try {
+        
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        
+        await setDoc(doc(db, "users", email), {
+    name: name,
+    city: city,
+    email: email,
+    username: username,
+    dob: null,
+    rating: 0,
+    friends: [], 
+});
+
+        
+        modal.style.display = 'flex';
+        form.reset(); 
+    } catch (error) {
+        console.error("Error during user registration:", error);
+        if (error.code === "auth/email-already-in-use") {
+            alert("Email already registered. Please log in.");
+        } else if (error.code === "auth/weak-password") {
+            alert("Password is too weak. Please use a stronger password.");
+        } else {
+            alert("An unexpected error occurred. Please try again later.");
+        }
+    }
+});
+
+
+closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+    window.location.href = "/Users/tanishbooti/Desktop/webd/sample/login/login.html"; 
+});
+    </script>
+</body>
+</html>

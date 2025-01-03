@@ -1,0 +1,181 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.container {
+    text-align: center;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+
+.logo-container img {
+    height: 8rem;
+    margin: 1rem auto;
+    display: block;
+    animation: fadeIn 1s ease-in-out;
+}
+
+
+.title-container h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: fadeInDown 1.2s ease-in-out;
+}
+
+
+.options h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1rem 0;
+}
+
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.badge {
+    background-color: #ffffff;
+    color: black;
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.badge:hover {
+    background-color: #ff00e6;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px #ff00e6;
+}
+
+
+.choose {
+    background-color: #ff00e6;
+    color: white;
+    box-shadow: 0 0 15px #ff00e6;
+}
+
+
+.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+
+.start-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 2rem; 
+}
+
+.start {
+    display: none;
+    padding: 0.75rem 2rem;
+    background-color: chartreuse;
+    color: black;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.start:hover {
+    background-color: limegreen;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px chartreuse;
+}
+
+
+.countdown {
+    margin-top: 2rem;
+    font-size: 3rem;
+    color: lightcoral;
+}
+
+
+.go {
+    font-size: 5rem;
+    color: yellow;
+    animation: pulse 1s infinite;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .title-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .countdown {
+        font-size: 2.5rem;
+    }
+
+    .go {
+        font-size: 4rem;
+    }
+}
+
+

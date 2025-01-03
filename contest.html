@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@100..900&family=Roboto+Mono:wght@100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  <link href="contest.css" rel="stylesheet">
+  <link href="typelogo.jpeg" rel="icon">
+
+</head>
+<body>
+
+  <div class="timer-container">
+    <div class="icon"><img src="hourglass.gif" alt="timer"></div>
+    <div class="text">Time Remaining:</div>
+    <div id="timer"></div>
+  </div>
+
+  <div class="text-area-container">
+    <div id="text-area"></div>
+  </div>
+
+  <div class="stats-container">
+    <div><span id="wpm"></span> </div>
+    <div><span id="cpm"></span></div>
+    <div><span id="accuracy"></span> </div>
+  </div>
+  <script type="module">
+    let time;
+    let level;
+    let totalTime;
+    let currentUser = null;
+    let lines = [];
+    let currentLineIndex = 0;
+    let typedText = "";
+    let totalChars = 0;
+    let correctChars = 0;
+    let timer;
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+        authDomain: "type-rivals-73388.firebaseapp.com",
+        projectId: "type-rivals-73388",
+        storageBucket: "type-rivals-73388.appspot.com",
+        messagingSenderId: "720102342621",
+        appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+        measurementId: "G-3KW6XR5BQR"
+    };
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, arrayUnion, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            checkIfAttemptedToday();  
+        } else {
+            alert("You must be logged in to attempt the contest. Redirecting to login page.");
+            window.location.href = "/login.html"; 
+        }
+    });
+
+    const selectedDifficulty = localStorage.getItem("selectedDifficulty");
+    const selectedTime = localStorage.getItem("selectedTime");
+
+   
+    if (selectedTime === "30 seconds") {
+        time = totalTime = 30;
+    } else if (selectedTime === "1 minute") {
+        time = totalTime = 60;
+    } else if (selectedTime === "2 minutes") {
+        time = totalTime = 120;
+    } else {
+        time = totalTime = 60; 
+    }
+
+    level = selectedDifficulty === "Beginner" ? 1 :
+            selectedDifficulty === "Intermediate" ? 2 :
+            selectedDifficulty === "Advanced" ? 3 : 1;
+
+    
+    async function checkIfAttemptedToday() {
+        if (!currentUser) return;
+
+        const email = currentUser.email;
+        const userDocRef = doc(db, "results", email);
+
+        try {
+            const userDocSnapshot = await getDoc(userDocRef);
+            if (userDocSnapshot.exists()) {
+                const contests = userDocSnapshot.data().contests || [];
+                const todayDate = new Date().toLocaleDateString();
+
+                
+                const alreadyAttempted = contests.some(contest => contest.title === `Daily challenge: ${todayDate}`);
+                if (alreadyAttempted) {
+                    alert("You have already attempted the contest today!");
+                    return;
+                } else {
+                    generateText();  
+                }
+            }
+        } catch (error) {
+            console.error("Error checking contest attempts:", error);
+        }
+    }
+
+
+    function generateText() {
+        const apiKey = "AIzaSyBlrIppji3U5LrW_E7-tuMI7ESUQ8WBwg4"; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+        const prompt = `Generate a new random text with 350 words for a typing test. Difficulty is ${selectedDifficulty}.`;
+
+        fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+            }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            const paragraph = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No text received.";
+            lines = paragraph.split("\n").map((line) => line.trim()).filter((line) => line);
+            displayCurrentLine();
+            startTimer();
+        })
+        .catch((error) => {
+            console.error("Error fetching API:", error);
+            document.querySelector("#text-area").innerText = "Error fetching text.";
+        });
+    }
+
+    function displayCurrentLine() {
+        if (currentLineIndex < lines.length) {
+            document.querySelector("#text-area").innerHTML = lines[currentLineIndex]
+                .split("")
+                .map((char) => `<span class="default">${char}</span>`)
+                .join("");
+            typedText = "";
+        }
+    }
+
+    function startTimer() {
+        timer = setInterval(() => {
+            if (time > 0) {
+                time--;
+                document.querySelector("#timer").innerText = `${time} seconds`;
+            } else {
+                clearInterval(timer);
+                disableTyping();
+                calculateStats();
+            }
+        }, 1000);
+    }
+
+    function disableTyping() {
+        document.removeEventListener("keydown", keydownListener);
+    }
+
+
+    function calculateStats() {
+        const timeElapsed = (totalTime - time) / 60 ;
+        const wpm = Math.round((correctChars / 5) / timeElapsed);
+        const cpm = Math.round(totalChars / timeElapsed) ;
+        const accuracy = Math.round((correctChars / totalChars) * 100) ;
+        const ratingEarned = Math.floor(accuracy * 0.4 + level * 3 + wpm * 0.3);
+        storeContestResult(wpm, cpm, accuracy, ratingEarned);
+        showResultBox(wpm, cpm, accuracy, ratingEarned);
+    }
+
+
+    async function storeContestResult(wpm, cpm, accuracy, ratingEarned) {
+        if (!currentUser) return;
+
+        const email = currentUser.email;
+        const timestamp = new Date();
+        const todayDate = timestamp.toLocaleDateString();
+        const contestTitle = `Daily challenge: ${todayDate}`;
+
+        const contestData = {
+            wpm,
+            cpm,
+            accuracy,
+            rating: ratingEarned,
+            date: timestamp.toLocaleDateString(),
+            time: timestamp.toLocaleTimeString(),
+            title: contestTitle, 
+        };
+
+        const userDocRef = doc(db, "results", email);
+
+        try {
+            await setDoc(userDocRef, {
+                contests: arrayUnion(contestData)
+            }, { merge: true });
+
+         
+            const userRef = doc(db, "users", email);
+            const userDoc = await getDoc(userRef);
+
+            let totalRating = ratingEarned;
+
+            if (userDoc.exists()) {
+                const currentRating = userDoc.data().rating;
+                totalRating = currentRating + ratingEarned;  
+            }
+
+            await updateDoc(userRef, {
+                rating: totalRating
+            });
+
+            console.log("Contest results and rating saved successfully:", contestData);
+        } catch (error) {
+            console.error("Error storing contest results and updating rating:", error);
+        }
+    }
+
+
+    function showResultBox(wpm, cpm, accuracy, ratingEarned) {
+        document.body.innerHTML = "";
+
+        const resultBox = document.createElement("div");
+        resultBox.id = "result-box";
+        resultBox.innerHTML = `
+            <h2>Contest Results</h2>
+            <div><strong>WPM:</strong> ${wpm}</div>
+            <div><strong>CPM:</strong> ${cpm}</div>
+            <div><strong>Accuracy:</strong> ${accuracy}%</div>
+            <div><strong>Ratings earned:</strong> ${ratingEarned}</div>
+            <button id="thank-you-button">Thank You</button>
+        `;
+
+        document.body.appendChild(resultBox);
+        document.getElementById("thank-you-button").addEventListener("click", () => {
+            window.location.href = "index.html";  
+        });
+    }
+
+
+    function keydownListener(event) {
+        const key = event.key;
+        if (key.length === 1 && !event.ctrlKey && !event.metaKey) {
+            handleTyping(key);
+        } else if (key === "Backspace") {
+            handleBackspace();
+        }
+    }
+
+    function handleTyping(key) {
+        const textArea = document.querySelector("#text-area");
+        const chars = textArea.querySelectorAll("span");
+
+        if (typedText.length < chars.length) {
+            typedText += key;
+            totalChars++;
+
+            const currentCharIndex = typedText.length - 1;
+            if (key === chars[currentCharIndex].innerText) {
+                chars[currentCharIndex].classList.remove("default");
+                chars[currentCharIndex].classList.add("correct");
+                correctChars++;
+            } else {
+                chars[currentCharIndex].classList.remove("default");
+                chars[currentCharIndex].classList.add("incorrect");
+            }
+
+            if (typedText.length === chars.length) {
+                currentLineIndex++;
+                if (currentLineIndex < lines.length) {
+                    displayCurrentLine();
+                } else {
+                    clearInterval(timer);
+                    disableTyping();
+                    calculateStats();
+                }
+            }
+        }
+    }
+
+    function handleBackspace() {
+        if (typedText.length > 0) {
+            typedText = typedText.slice(0, -1);
+            const textArea = document.querySelector("#text-area");
+            const chars = textArea.querySelectorAll("span");
+            const currentCharIndex = typedText.length;
+
+            if (chars[currentCharIndex].classList.contains("correct")) {
+                correctChars--;
+            }
+            chars[currentCharIndex].classList.remove("correct", "incorrect");
+            chars[currentCharIndex].classList.add("default");
+            totalChars--;
+        }
+    }
+
+
+    document.addEventListener("keydown", keydownListener);
+</script>
+
+</body>
+</html>
+
+

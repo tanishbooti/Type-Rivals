@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <title>Contest History</title>
+    <link rel="stylesheet" href="history.css">
+    <link rel="icon" href="typelogo.jpeg">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Contest History</h1>
+        <div id="history-section" class="history-grid">
+           
+        </div>
+        <div class="btn-container">
+            <a href="index.html" class="btn">Back to Home</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+       
+        const firebaseConfig = {
+            apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+            authDomain: "type-rivals-73388.firebaseapp.com",
+            projectId: "type-rivals-73388",
+            storageBucket: "type-rivals-73388.appspot.com",
+            messagingSenderId: "720102342621",
+            appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+            measurementId: "G-3KW6XR5BQR"
+        };
+
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+   
+        const historySection = document.getElementById('history-section');
+
+      
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const email = user.email;
+
+                try {
+                    
+                    const userDocRef = doc(db, "results", email);
+                    const userDocSnap = await getDoc(userDocRef);
+
+                    if (userDocSnap.exists()) {
+                        const data = userDocSnap.data();
+                        const contests = data.contests || [];
+
+                        if (contests.length === 0) {
+                            displayNoHistoryMessage();
+                        } else {
+                            renderContestCards(contests);
+                        }
+                    } else {
+                        displayNoHistoryMessage();
+                    }
+                } catch (error) {
+                    console.error("Error fetching contest history:", error);
+                }
+            } else {
+                alert("You are not logged in! Redirecting to login page.");
+                window.location.href = "login.html"; 
+            }
+        });
+
+        
+        function displayNoHistoryMessage() {
+            historySection.innerHTML = `<p class="no-history">No contest history available.</p>`;
+        }
+
+      
+        function renderContestCards(contests) {
+            contests.forEach(contest => {
+                const card = document.createElement('div');
+                card.className = 'contest-card';
+                card.innerHTML = `
+                    <h3>${contest.date}</h3>
+                    <p><strong>Time:</strong> ${contest.time}</p>
+                    <p><strong>WPM:</strong> ${contest.wpm}</p>
+                    <p><strong>Accuracy:</strong> ${contest.accuracy}%</p>
+                    <p><strong>Ratings Earned:</strong> ${contest.rating}</p>
+                `;
+                historySection.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

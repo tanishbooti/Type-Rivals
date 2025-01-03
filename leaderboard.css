@@ -1,0 +1,151 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+    background-color: #000; 
+    color: #fff; 
+  }
+  
+  .main {
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .heading {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  h1 {
+    background: linear-gradient(45deg, chartreuse, gold);
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nav-bar{
+    align-self: flex-end;
+  }
+
+  
+
+
+  .leaderboard-table {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #1c1c1c; 
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #333; 
+  }
+  
+  .leaderboard-table th {
+    background-color: #444; 
+    color: chartreuse; 
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .leaderboard-table tr:nth-child(even) {
+    background-color: #2b2b2b; 
+  }
+  
+  .leaderboard-table tr:hover {
+    background-color: #444; 
+    cursor: pointer;
+  }
+  
+  .leaderboard-table td {
+    font-size: 1rem;
+    color: #fff;
+  }
+  
+
+  @media (max-width: 768px) {
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+  
+    .heading {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 8px;
+      font-size: 0.8rem;
+    }
+  
+    .heading {
+      font-size: 2rem;
+    }
+  }
+  
+  .leaderboard-table {
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .leaderboard-table tr:hover {
+    animation: hoverPop 0.3s ease-in-out;
+  }
+  
+  @keyframes hoverPop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.03);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    background: chartreuse;
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-right: 2vw;
+}
+
+.btn:hover {
+    transform: scale(1.1);
+    background: chartreuse;
+}
+

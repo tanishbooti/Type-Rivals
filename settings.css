@@ -1,0 +1,104 @@
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #181818;
+    color: #ddd;
+}
+
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 2.2em;
+    font-weight: 500;
+    color: #f1f1f1;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #b0b0b0;
+}
+
+
+.settings-form {
+    background-color: #222222;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 40px;
+}
+
+.setting-item {
+    margin-bottom: 25px;
+}
+
+.setting-item label {
+    font-size: 1.2em;
+    font-weight: 400;
+    color: #f1f1f1;
+    display: block;
+    margin-bottom: 10px;
+}
+
+select, input[type="checkbox"] {
+    background-color: #333333;
+    color: #ddd;
+    border: 1px solid #444;
+    padding: 10px;
+    font-size: 1em;
+    width: 100%;
+    border-radius: 6px;
+    outline: none;
+}
+
+select:focus, input[type="checkbox"]:focus {
+    border-color: #00aaff;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-left: 10px;
+}
+
+
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+
+#save-button {
+    background-color: #00aaff;
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 1.1em;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#save-button:hover {
+    background-color: #0099cc;
+}
+
+
+.footer {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 0.9em;
+    color: #b0b0b0;
+}

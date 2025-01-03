@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
+    <link rel="icon" href="typelogo.jpeg" />
+    <title>Login - Battle Arena</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <img src="typelogo.jpeg" alt="Battle Arena Logo">
+        <h2>Login to Battle Arena</h2>
+        <form id="login-form">
+            <div class="input-container">
+                <i class="fas fa-user input-icon"></i>
+                <input type="email" id="email" placeholder="Email" required>
+            </div>
+            <div class="input-container">
+                <i class="fas fa-shield-alt input-icon"></i>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="submit">Enter the Arena</button>
+        </form>
+        
+        <p class="error-message" id="error-message"></p>
+        <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        
+        
+    </div>
+
+    <div class="modal" id="popup-modal">
+        <div class="modal-content">
+            <h3>Welcome Back!</h3>
+            <p>You have successfully logged in.</p>
+            <button id="close-modal">Okay!</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+            authDomain: "type-rivals-73388.firebaseapp.com",
+            projectId: "type-rivals-73388",
+            storageBucket: "type-rivals-73388.appspot.com",
+            messagingSenderId: "720102342621",
+            appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+            measurementId: "G-3KW6XR5BQR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const form = document.getElementById('login-form');
+        const modal = document.getElementById('popup-modal');
+        const closeModal = document.getElementById('close-modal');
+        const errorMessage = document.getElementById('error-message');
+        const forgotPasswordLink = document.getElementById('forgot-password');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    modal.style.display = 'flex';
+                    console.log('User logged in:', userCredential.user);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessageText = error.message;
+
+                    errorMessage.textContent = '';
+
+                    if (errorCode === 'auth/wrong-password') {
+                        errorMessage.textContent = "Incorrect password. Please try again.";
+                    } else if (errorCode === 'auth/user-not-found') {
+                        errorMessage.textContent = "You haven't signed up yet. Click on 'Sign Up' to create an account.";
+                    } else if (errorCode === 'auth/invalid-email') {
+                        errorMessage.textContent = "Please enter a valid email address.";
+                    } else {
+                        errorMessage.textContent = "Error: " + errorMessageText;
+                    }
+                    console.log(errorCode, errorMessageText);
+                });
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            window.location.href = "index.html";
+        });
+
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            if (email) {
+                sendPasswordResetEmail(auth, email)
+                    .then(() => {
+                        alert('Password reset email sent!');
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessageText = error.message;
+                        alert(errorMessageText);
+                    });
+            } else {
+                alert('Please enter your email to reset the password.');
+            }
+        });
+
+       
+    </script>
+</body>
+</html>

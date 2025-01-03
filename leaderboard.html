@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+      integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Type Rivals - Leaderboard</title>
+    <link rel="stylesheet" href="leaderboard.css" />
+    <link
+      rel="icon"
+      href="typelogo.jpeg"
+    />
+  </head>
+  <body>
+    <div class="main">
+      <div class="nav-bar">
+        <button class="btn sort" id="sortByCityBtn">Sort By City</button>
+        <button class="btn home">Home Page</button>
+      </div>
+      <h1 class="heading">Leaderboard</h1>
+      <table id="leaderboard-table" class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>City</th>
+          </tr>
+        </thead>
+        <tbody>
+          </tbody>
+      </table>
+    </div>
+
+    <script type="module">
+      // Initialize Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+      import { getFirestore, collection, getDocs, query, orderBy, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+        authDomain: "type-rivals-73388.firebaseapp.com",
+        projectId: "type-rivals-73388",
+        storageBucket: "type-rivals-73388.appspot.com",
+        messagingSenderId: "720102342621",
+        appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+        measurementId: "G-3KW6XR5BQR"
+      };
+
+      
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      let currentUserCity = "";
+      let isCitySort = false; 
+
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            const userDocRef = doc(db, "users", user.email); 
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists()) {
+              currentUserCity = userDoc.data().city;
+              populateLeaderboard(); 
+            } else {
+              console.error("User document not found.");
+            }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+          }
+        } else {
+          
+          console.log("User is signed out.");
+          
+        }
+      });
+
+      async function populateLeaderboard(cityFilter = null) {
+        const leaderboardTableBody = document.querySelector("#leaderboard-table tbody");
+        leaderboardTableBody.innerHTML = ""; 
+
+        try {
+          const usersCollection = collection(db, "users");
+          let q;
+
+          if (cityFilter) {
+            q = query(usersCollection, where("city", "==", cityFilter), orderBy("rating", "desc"));
+          } else {
+            q = query(usersCollection, orderBy("rating", "desc")); 
+          }
+
+          const querySnapshot = await getDocs(q);
+
+          if (querySnapshot.empty) {
+            leaderboardTableBody.innerHTML =
+              "<tr><td colspan='4'>No users found.</td></tr>"; 
+          } else {
+            let rank = 1;
+            querySnapshot.forEach((doc) => {
+              const userData = doc.data();
+              const { name, rating, city } = userData;
+
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${rank}</td>
+                <td>${name || "Anonymous"}</td>
+                <td>${rating || 0}</td>
+                <td>${city}</td>
+              `;
+              leaderboardTableBody.appendChild(row);
+              rank++;
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching leaderboard data:", error);
+          leaderboardTableBody.innerHTML =
+            "<tr><td colspan='4'>Error loading data.</td></tr>";
+        }
+      }
+
+      
+      document.getElementById("sortByCityBtn").addEventListener("click", async () => {
+        isCitySort = !isCitySort; 
+
+        const sortByCityBtn = document.getElementById("sortByCityBtn");
+        sortByCityBtn.textContent = isCitySort ? "Overall Leaderboard" : "Sort By City";
+
+        if (isCitySort) {
+          populateLeaderboard(currentUserCity); 
+        } else {
+          populateLeaderboard(); 
+        }
+      });
+    </script>
+  </body>
+</html>

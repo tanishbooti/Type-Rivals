@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+      integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Type Rivals</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="icon" href="typelogo.jpeg" />
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <div class="nav">
+          <div class="nav-option">
+            <i class="fa-solid fa-house"></i> Home
+          </div>
+        </div>
+        <div class="nav-option lead">
+          <h3 class="leaderboard">
+            <i class="fa-solid fa-trophy" style="margin-right: 7px;"></i> Leaderboard
+          </h3>
+        </div>
+        <div class="box">
+          <p class="box-title">Daily Challenge <br> <h6> under construction! </h6></p>
+          <p class="box-desc">Push your limits and rise above the competition!</p>
+          <button class="btn">Attempt Now</button>
+        </div>
+        <div class="box">
+          <p class="box-title">Rate Us</p>
+          <p class="box-desc">Let your voice shape our journey!</p>
+          <button class="btn rate">Rate Now</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="header">
+          <img src="typelogo.jpeg" class="logo" alt="Type Rivals Logo" />
+          <div class="profileArea">
+            <div class="profile-area">
+              <button class="btn profilebtn"></button>
+              <div class="dropdown-menu" id="dropdownMenu">
+                <div class="menu-option edit">
+                  <i class="fa-regular fa-user"></i> Edit Profile
+                </div>
+                <div class="menu-option history">
+                  <i class="fa-solid fa-clock-rotate-left"></i> Contest History
+                </div>
+                <div class="menu-option settings">
+                  <i class="fa-solid fa-gear"></i> Settings
+                </div>
+                <div class="menu-option faq">
+                  <i class="fa-solid fa-info"></i> FAQ
+                </div>
+              </div>
+            </div>
+            <div class="logoutbtn">
+              <button class="btn logout">Logout</button>
+            </div>
+          </div>
+        </header>
+
+        <section class="content">
+          <h1>Welcome to Type Rivals: The Ultimate Typing Showdown!</h1>
+          <div class="card-container">
+            <div class="card">
+              <h3>Ready to take on the world? Unleash your inner typing warrior and conquer your rivals in the most intense typing arena ever!</h3>
+            </div>
+            <div class="startdiv">
+              <button class="btn primary start">
+                Challenge Yourself Now
+              </button>
+            </div>
+          </div>
+        
+          <h2>Ready to level up? Explore These Thrilling Challenges:</h2>
+          <div class="features">
+            <div class="feature-card">
+              <h3>✍️ <strong>Blog</strong></h3>
+              <p>Get the latest tips, tricks, and stories to sharpen your skills and outpace your competition. Don't miss out on the insider knowledge and share yours too!</p>
+              <button class="btn visit" style="width: 15%;">
+                Visit
+              </button>
+            </div>
+            <div class="feature-card">
+              <h3>💥 <strong>Test Your Gear</strong></h3>
+              <p>Is your keyboard fast enough to keep up? Put it to the test and see if it can handle the heat of a real typing showdown!</p>
+              <button class="btn test" style="width: 15%;">
+                Test Your Gear
+              </button>
+            </div>
+            <div class="feature-card">
+              <h3>🤝 <strong>Got Alliances?</strong></h3>
+              <p>Team up with the best. Check out your allies and rise together to dominate the leaderboards!</p>
+              <button class="btn friends" style="width: 15%;">
+                Check Your Friends
+              </button>
+            </div>
+            <div class="feature-card">
+              <h3>⚔️ <strong>Your Battleground Journey!</strong></h3>
+              <p>Step into the arena and challenge the best. Who will reign supreme on the battleground? Find out now!</p>
+              <button class="btn battleground" style="width: 15%;">
+                Enter Battleground
+              </button>
+            </div>
+          </div>
+        </section>
+        
+      </main>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+        authDomain: "type-rivals-73388.firebaseapp.com",
+        projectId: "type-rivals-73388",
+        storageBucket: "type-rivals-73388.appspot.com",
+        messagingSenderId: "720102342621",
+        appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+        measurementId: "G-3KW6XR5BQR",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const userProfile = document.querySelector(".profilebtn");
+
+      // User status check and logout handling
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", user.email));
+            const userData = userDoc.exists() ? userDoc.data() : {};
+            userProfile.innerText = `${userData.name}`;
+
+            document
+              .querySelector(".logoutbtn")
+              .addEventListener("click", () => {
+                signOut(auth)
+                  .then(() => {
+                    alert("Logged out successfully");
+                    window.location.href = "login.html";
+                  })
+                  .catch((error) => console.error("Logout error:", error));
+              });
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+          }
+        } else {
+          // Redirect if the user is not logged in
+          window.location.href = "login.html";
+        }
+      });
+
+      // Profile dropdown menu functionality
+      const profileBtn = document.querySelector(".profilebtn");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+
+      profileBtn.addEventListener("click", () => {
+        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+      });
+
+      // Close dropdown if clicked outside the menu
+      document.addEventListener("click", (event) => {
+        if (!profileBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
+          dropdownMenu.style.display = "none";
+        }
+      });
+
+      // Redirect to respective pages on menu options click
+      document.querySelector(".edit").addEventListener("click", () => {
+        window.location.href = "profile.html";
+      });
+
+      document.querySelector(".history").addEventListener("click", () => {
+        window.location.href = "history.html";
+      });
+
+      document.querySelector('.lead').addEventListener('click', () => {
+        window.location.href = 'leaderboard.html';
+      });
+
+      document.querySelector('.faq').addEventListener('click', () => {
+        window.location.href = 'faq.html';
+      });
+
+      document.querySelector('.settings').addEventListener('click', () => {
+        window.location.href = 'settings.html';
+      });
+
+      document.querySelector('.start').addEventListener('click', () => {
+        window.location.href = 'customization.html';
+      });
+
+      document.querySelector('.visit').addEventListener('click', () => {
+        window.location.href = 'blog.html';
+      });
+
+
+      document.querySelector('.test').addEventListener('click', () => {
+        window.location.href = 'check.html';
+      });
+
+
+      document.querySelector('.friends').addEventListener('click', () => {
+        window.location.href = 'friends.html';
+      });
+
+      document.querySelector('.battleground').addEventListener('click', () => {
+        window.location.href = 'battleground.html';
+      });
+
+      document.querySelector('.rate').addEventListener('click', () => {
+        window.location.href = 'feedback.html';
+      });
+    </script>
+  </body>
+</html>

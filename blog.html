@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write a Blog</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+      integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@100...900&family=Merriweather:wght@300&family=Montserrat:wght@100..900&family=Roboto&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="blog.css">
+    <link rel="icon" href="typelogo.jpeg" />
+</head>
+<body>
+    <div class="left">
+        <div class="heading">
+            <img src="typelogo.jpeg">
+            <h2>Wanna write a blog?</h2>
+            <h4>Go ahead!</h4>
+        </div>
+        <div class="blogArea">
+            <input type="text" id="title" placeholder="Enter title">
+            <textarea id="blog" placeholder="Start writing your blog..."></textarea>
+        </div>
+        <div class="postbtn">
+            <button id="post-btn" class="post btn">Post Blog</button>
+        </div>
+    </div>
+    <div class="right">
+        <h1>Check Out What Your Rivals Are Saying!</h1>
+        <div id="blog-list"></div>
+    </div>
+
+    <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+    import { 
+        getFirestore, 
+        collection, 
+        addDoc, 
+        getDocs, 
+        getDoc,
+        updateDoc, 
+        doc, 
+        deleteDoc, 
+        query, 
+        setDoc,
+        orderBy 
+    } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+        authDomain: "type-rivals-73388.firebaseapp.com",
+        projectId: "type-rivals-73388",
+        storageBucket: "type-rivals-73388.appspot.com",
+        messagingSenderId: "720102342621",
+        appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+        measurementId: "G-3KW6XR5BQR",
+    };
+
+const now = new Date();
+
+const hours = now.getHours().toString().padStart(2, '0'); 
+const minutes = now.getMinutes().toString().padStart(2, '0');
+const day = now.getDate().toString().padStart(2, '0'); 
+const month = (now.getMonth() + 1).toString().padStart(2, '0'); 
+const year = now.getFullYear();
+
+
+const formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
+
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const titleInput = document.getElementById("title");
+    const blogInput = document.getElementById("blog");
+    const postButton = document.getElementById("post-btn");
+    const blogList = document.getElementById("blog-list");
+
+    let currentUser = null;
+    let userName = "Anonymous"; 
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html"; 
+            return;
+        }
+
+        currentUser = user;
+
+        // Fetch user data using the UID
+        const userDoc = await getDoc(doc(db, "users", user.email));
+        const userData = userDoc.exists() ? userDoc.data() : {}; 
+        userName = userData.name 
+
+        loadBlogs(); 
+    });
+
+
+const loadBlogs = async () => {
+    blogList.innerHTML = ""; 
+
+    const blogsRef = collection(db, "blogs"); 
+    const q = query(blogsRef, orderBy("timestamp", "desc")); 
+
+    const querySnapshot = await getDocs(q); 
+
+    querySnapshot.forEach((docSnapshot) => {
+        const blog = docSnapshot.data(); 
+        const blogElement = document.createElement("div");
+        blogElement.className = "blog-item";
+
+
+        blogElement.innerHTML = `
+            <h3>${blog.title}</h3>
+            <p>${blog.content}</p>
+            <div class="author"><p>- ${blog.authorName}<br>${formattedTimestamp}</p></div>
+        `;
+        
+  
+        if (blog.authorId === currentUser.uid) {
+            const actionBtnDiv = document.createElement("div");
+            actionBtnDiv.classList.add("actionbtn");
+            
+            const editButton = document.createElement("button");
+            editButton.classList.add("edit-btn");
+            editButton.innerHTML = `<i class="fa-solid fa-pen"></i> `;
+            editButton.onclick = () => editBlog(docSnapshot.id, blog.title, blog.content); 
+
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("delete-btn");
+            deleteButton.innerHTML = `<i class="fa-solid fa-trash"></i> `;
+            deleteButton.onclick = () => deleteBlog(docSnapshot.id); 
+
+            actionBtnDiv.appendChild(editButton);
+            actionBtnDiv.appendChild(deleteButton);
+
+            blogElement.appendChild(actionBtnDiv);
+        }
+
+        blogList.appendChild(blogElement);
+    });
+};
+
+    postButton.addEventListener("click", async () => {
+        const title = titleInput.value.trim();
+        const content = blogInput.value.trim();
+
+        if (!title || !content) {
+            alert("Please fill in all fields!");
+            return;
+        }
+
+        try {
+
+            const newBlogRef = await addDoc(collection(db, "blogs"), {
+                title,
+                content,
+                authorName: userName,
+                authorId: currentUser.uid, 
+                timestamp: formattedTimestamp,
+            });
+
+            titleInput.value = "";
+            blogInput.value = "";
+            loadBlogs(); 
+        } catch (error) {
+            console.error("Error posting blog:", error);
+        }
+    });
+
+
+    window.editBlog = async (docId, title, content) => {
+        const newTitle = prompt("Edit title:", title);
+        const newContent = prompt("Edit content:", content);
+
+        if (newTitle && newContent) {
+            const blogRef = doc(db, "blogs", docId);
+            await updateDoc(blogRef, {
+                title: newTitle,
+                content: newContent,
+            });
+
+            loadBlogs(); 
+        }
+    };
+
+
+    window.deleteBlog = async (docId) => {
+        if (confirm("Are you sure you want to delete this blog?")) {
+            const blogRef = doc(db, "blogs", docId);
+            await deleteDoc(blogRef); 
+            loadBlogs(); 
+        }
+    };
+
+    </script>
+</body>
+</html>

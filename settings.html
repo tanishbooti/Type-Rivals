@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Settings - User Preferences</title>
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Settings</h1>
+            <p class="subtitle">Adjust your preferences</p>
+        </header>
+
+        <div class="settings-form">
+            
+            <div class="setting-item">
+                <label for="sound-toggle">Enable Sound</label>
+                <input type="checkbox" id="sound-toggle" />
+            </div>
+
+          
+            <div class="setting-item">
+                <label for="auto-submit-toggle">Enable Auto-Submit</label>
+                <input type="checkbox" id="auto-submit-toggle" />
+            </div>
+
+           
+            <div class="setting-item">
+                <label for="font-size-selector">Select Font Size</label>
+                <select id="font-size-selector">
+                    <option value="14px">14px</option>
+                    <option value="16px">16px</option>
+                    <option value="18px">18px</option>
+                    <option value="20px">20px</option>
+                </select>
+            </div>
+
+       
+            <div class="setting-item">
+                <label for="text-color-selector">Select Text Color</label>
+                <select id="text-color-selector">
+                    <option value="white">White</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="red">Red</option>
+                </select>
+            </div>
+
+         
+            <div class="setting-item">
+                <label for="show-tips-toggle">Show Typing Tips</label>
+                <input type="checkbox" id="show-tips-toggle" />
+            </div>
+
+        
+            <div class="button-container">
+                <button id="save-button">Save Settings</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 Type Rivals - All rights reserved</p>
+        </div>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+</html>

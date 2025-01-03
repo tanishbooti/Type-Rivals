@@ -1,0 +1,180 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: black;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+  }
+.main{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+  i{
+    background-color: transparent;
+  }
+  
+
+  .header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    height: 10vh;
+    padding: 0 20px;
+    background-color: #121212;
+  }
+  
+
+  .profilepicture {
+    margin-top: 5vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  
+  
+  .league {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-top: 20px;
+  }
+  .rating{
+    margin-left: 3vw;
+    margin-bottom: 3vh;
+  }
+  .btn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    background: chartreuse;
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  
+  .btn:hover {
+    transform: scale(1.1);
+   
+  }
+  
+
+  .info {
+    margin-top: 20px;
+    width: 80%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  
+
+  
+  .name, .email, .username, .city, .dob {
+    margin-left: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 15px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #222;
+    display: flex;
+    transition: transform 0.2s ease, background 0.3s ease;
+    justify-content: space-between;
+  }
+  
+  .name:hover, .email:hover, .username:hover, .city:hover, .dob:hover{
+    transform: scale(1.05);
+    border: 2px solid chartreuse;
+    
+  }
+
+
+  h2 {
+    color: white;
+    margin-left: 3vw;
+  }
+  
+
+  @media (max-width: 768px) {
+    img {
+      width: 30vw;
+    }
+  
+    .btn {
+      font-size: 0.9rem;
+      padding: 8px 15px;
+    }
+  
+    .info {
+      width: 90%;
+    }
+  
+    .subinfo {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .btn {
+      font-size: 0.8rem;
+      padding: 6px 10px;
+    }
+  
+    .subinfo {
+      font-size: 0.8rem;
+    }
+  }
+
+  .edit-input{
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: large ;
+  }
+
+  .save-btn{
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+
+  .logout, .contest-history-btn{
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+    margin-top: 7%;
+  }
+
+  .logout:hover, .contest-history-btn:hover{
+    transform: scale(1.1);
+    background: chartreuse;
+  }

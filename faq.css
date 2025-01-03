@@ -1,0 +1,109 @@
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #181818;
+    color: #ddd;
+    margin: 0;
+    padding: 0;
+}
+
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 2.2em;
+    font-weight: 500;
+    color: #f1f1f1;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #b0b0b0;
+}
+
+
+.faq-section {
+    margin-top: 40px;
+}
+
+.faq-item {
+    background-color: #222222;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    background-color: #333333;
+}
+
+.question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+h3 {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 400;
+    color: #f1f1f1;
+}
+
+.toggle-icon {
+    font-size: 1.6em;
+    color: #b0b0b0;
+}
+
+.answer {
+    display: none;
+    margin-top: 10px;
+    font-size: 1.1em;
+    color: #ccc;
+}
+
+.contact-details {
+    background-color: #222222;
+    padding: 25px;
+    margin-top: 50px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2); 
+}
+
+.contact-details:hover{
+    border-color: chartreuse;
+}
+
+.contact-details h2 {
+    font-size: 1.8em;
+    font-weight: 500;
+    color: #f1f1f1;
+    margin-bottom: 10px;
+}
+
+.contact-details p {
+    font-size: 1.1em;
+}
+
+.contact-details a {
+    color: #00aaff;
+    text-decoration: none;
+}
+
+.contact-details a:hover {
+    text-decoration: underline;
+}

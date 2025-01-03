@@ -1,0 +1,39 @@
+body{
+    font-family: 'Montserrat',sans-serif;
+    margin: 0;
+    background-color: black;
+    color: white;
+    overflow: hidden;  
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.h1{
+    margin-top: 20%;
+}
+
+.testingwindow{
+    margin-top: 15%;
+}
+
+img{
+    height: 6rem;
+    width: 8rem;
+    margin: auto;
+}
+
+input{
+    appearance: none;
+    height: 2rem;
+    width: 10rem;
+    background-color: #121212;
+    border-color: white;
+    color: white;
+}
+
+h4{
+    margin-bottom: 20%;
+}
