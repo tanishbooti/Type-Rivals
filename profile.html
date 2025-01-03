@@ -16,33 +16,38 @@
 <div class="main">
     <div class="league" style="margin-top: 20px;">
         <div class="rating btn">Rating:</div>
-        
-        
     </div>
 </div>
 <h2 style="color: white; text-align: center;">Your Profile</h2>
 <div class="info" style="text-align: center;">
-    <div class="username"></div>
-    <div class="name"></div>
-    <div class="email"></div>
-    <div class="city"></div>
-    <div class="dob"></div>
+    <div class="username">
+        <p>Username: </p><span id="username-value"></span>
+        <i class="fa-solid fa-pen-to-square editname"></i>
+    </div>
+    <div class="name">
+        <p>Name: </p><span id="name-value"></span>
+        <i class="fa-solid fa-pen-to-square editname"></i>
+    </div>
+    <div class="email">
+        <p>Email: </p><span id="email-value"></span>
+    </div>
+    <div class="city">
+        <p>City: </p><span id="city-value"></span>
+        <i class="fa-solid fa-pen-to-square editcity"></i>
+    </div>
+    <div class="dob">
+        <p>Date of Birth: </p><span id="dob-value"></span>
+        <i class="fa-solid fa-pen-to-square editdob"></i>
+    </div>
 </div>
 <div class="contest-history" style="text-align: center;">
     <button class="contest-history-btn" style="padding: 10px; background-color: chartreuse; color: black;" onclick="window.location.href='/Users/tanishbooti/Desktop/webd/sample/assets/typelogo.jpeg'">Contest History</button>
 </div>
 
-
-</div>
-    
-
-          
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-
 
     const firebaseConfig = {
         apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
@@ -58,7 +63,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-   
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             try {
@@ -69,20 +73,13 @@
                 }
                 const userData = userDoc.data();
 
-           
-                document.querySelector('.username').innerHTML = `<p>Username: ${userData.username || ''}</p>`;
-                document.querySelector('.name').innerHTML = `<p>Name: ${userData.name || ''}</p><i class="fa-solid fa-pen-to-square editname"></i>`;
-                document.querySelector('.email').innerHTML = `<p>Email: ${userData.email || ''}</p>`;
-                document.querySelector('.city').innerHTML = `<p>City: ${userData.city || ''}</p><i class="fa-solid fa-pen-to-square editcity"></i>`;
-                document.querySelector('.dob').innerHTML = `<p>Date of Birth: ${userData.dob || ''}</p><i class="fa-solid fa-pen-to-square editdob"></i>`;
+                // Display user data
+                document.getElementById('username-value').innerText = userData.username || '';
+                document.getElementById('name-value').innerText = userData.name || '';
+                document.getElementById('email-value').innerText = userData.email || '';
+                document.getElementById('city-value').innerText = userData.city || '';
+                document.getElementById('dob-value').innerText = userData.dob || '';
                 document.querySelector('.rating').innerText = `Rating: ${userData.rating || ''}`;
-
-      
-                const uploadedImg = document.getElementById("uploaded-img");
-                if (userData.profilePicture) {
-                    uploadedImg.src = userData.profilePicture;
-                    uploadedImg.style.display = "block";
-                }
 
             } catch (error) {
                 console.error("Error fetching user data:", error);
@@ -92,7 +89,7 @@
         }
     });
 
-
+    // Logout button functionality
     document.querySelector('.logout').addEventListener("click", () => {
         signOut(auth).then(() => {
             alert("Logged out successfully.");
@@ -100,10 +97,45 @@
         }).catch(error => console.error("Logout error:", error));
     });
 
-
-    document.querySelector('.contest-history').addEventListener('click', () => {
-        window.location.href = 'history.html';
+    // Editing functionality
+    document.querySelector('.editname').addEventListener("click", () => {
+        const nameValue = document.getElementById('name-value');
+        const newName = prompt("Edit Name:", nameValue.innerText);
+        if (newName && newName !== nameValue.innerText) {
+            updateUserData("name", newName);
+            nameValue.innerText = newName;
+        }
     });
+
+    document.querySelector('.editcity').addEventListener("click", () => {
+        const cityValue = document.getElementById('city-value');
+        const newCity = prompt("Edit City:", cityValue.innerText);
+        if (newCity && newCity !== cityValue.innerText) {
+            updateUserData("city", newCity);
+            cityValue.innerText = newCity;
+        }
+    });
+
+    document.querySelector('.editdob').addEventListener("click", () => {
+        const dobValue = document.getElementById('dob-value');
+        const newDob = prompt("Edit Date of Birth:", dobValue.innerText);
+        if (newDob && newDob !== dobValue.innerText) {
+            updateUserData("dob", newDob);
+            dobValue.innerText = newDob;
+        }
+    });
+
+    // Function to update the Firestore document
+    async function updateUserData(field, newValue) {
+        const user = auth.currentUser;
+        if (user) {
+            const userDocRef = doc(db, "users", user.email);
+            await updateDoc(userDocRef, {
+                [field]: newValue
+            });
+        }
+    }
 </script>
+
 </body>
 </html>
