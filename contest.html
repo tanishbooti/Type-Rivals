@@ -116,8 +116,8 @@
 
 
     function generateText() {
-        const apiKey = "AIzaSyBlrIppji3U5LrW_E7-tuMI7ESUQ8WBwg4"; 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+        const apiKey = "AIzaSyB8v-aSzYHlisfmhpPluxJgGaEKmtENx5o"; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
         const prompt = `Generate a new random text with 350 words for a typing test. Difficulty is ${selectedDifficulty}.`;
 
         fetch(apiUrl, {
