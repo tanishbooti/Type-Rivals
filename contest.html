@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Typing Test</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@100..900&family=Roboto+Mono:wght@100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@100..900&family=Roboto+Mono:wght@100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   <link href="contest.css" rel="stylesheet">
   <link href="typelogo.jpeg" rel="icon">
-
 </head>
 <body>
 
@@ -24,10 +23,11 @@
   </div>
 
   <div class="stats-container">
-    <div><span id="wpm"></span> </div>
-    <div><span id="cpm"></span></div>
-    <div><span id="accuracy"></span> </div>
+    <div><span id="wpm">WPM: 0</span></div>
+    <div><span id="cpm">CPM: 0</span></div>
+    <div><span id="accuracy">Accuracy: 0%</span></div>
   </div>
+
   <script type="module">
     let time;
     let level;
@@ -58,11 +58,9 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
-            
         } else {
             alert("You must be logged in to attempt the contest. Redirecting to login page.");
             window.location.href = "login.html"; 
@@ -72,7 +70,6 @@
     const selectedDifficulty = localStorage.getItem("selectedDifficulty"); //selected in customization.html
     const selectedTime = localStorage.getItem("selectedTime");
 
-   
     if (selectedTime === "30 seconds") {
         time = totalTime = 30;
     } else if (selectedTime === "1 minute") {
@@ -87,25 +84,24 @@
             selectedDifficulty === "Intermediate" ? 2 :
             selectedDifficulty === "Advanced" ? 3 : 1;
 
-    
     function generateText() {
-        const apiKey = "AIzaSyB8v-aSzYHlisfmhpPluxJgGaEKmtENx5o"; 
+        const apiKey = "AIzaSyCWGape5yRhXYEJr4y9yRRgmdg4U7I10Sw"; 
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
         const prompt = `Generate a new random text with 350 words for a typing test (it should be different from your prev responses). Difficulty is ${selectedDifficulty}.`;
 
-        fetch(apiUrl, {  //fetch func makes req to api end pnt
-            method: "POST", //sending promt to data.. we use 'get' to retreive
-            headers: { "Content-Type": "application/json" }, //sets http headers for req and tells that body of req is formatted as json
+        fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
-            }), //converting into json string
+            }),
         })
-        .then((response) => response.json()) //converts response to json
-        .then((data) => { //processes the json data now 
-            const paragraph = data?.candidates?.[0]?.content?.parts?.[0]?.text ; //extract text from response
-            lines = paragraph.split("\n")//splitting para into lines (array bn gya lines ka)
-            .map((line) => line.trim()) //iterating over each line, removing trailing leading whitespaces
-            .filter((line) => line); //filter out empty lines
+        .then((response) => response.json())
+        .then((data) => {
+            const paragraph = data?.candidates?.[0]?.content?.parts?.[0]?.text ;
+            lines = paragraph.split("\n")
+            .map((line) => line.trim())
+            .filter((line) => line);
             displayCurrentLine(); 
             startTimer();
         })
@@ -118,20 +114,21 @@
     function displayCurrentLine() {
         if (currentLineIndex < lines.length) {
             document.querySelector("#text-area").innerHTML = lines[currentLineIndex]
-                .split("")//hr line ko split kr diya into words
-                .map((char) => `<span class="default">${char}</span>`) //iterating over each word and making out span for each char
-                .join(""); //fr yeh sbi spans ko integrate krdiya
-            typedText = ""; //makes typed text empty string
+                .split("")
+                .map((char) => `<span class="default">${char}</span>`)
+                .join("");
+            typedText = ""; 
         }
     }
 
     function startTimer() {
-        timer = setInterval(() => { //runs after every 1 sec
+        timer = setInterval(() => {
             if (time > 0) {
                 time--;
                 document.querySelector("#timer").innerText = `${time} seconds`;
+                updateStats();
             } else {
-                clearInterval(timer); //timer ka interval bnd krdiya taki voh cont chlta na rhe
+                clearInterval(timer);
                 disableTyping();
                 calculateStats();
             }
@@ -142,52 +139,44 @@
         document.removeEventListener("keydown", keydownListener);
     }
 
-
     function calculateStats() {
-        const wpm = Math.round((correctChars / 5) / totalTime);
-        const cpm = Math.round(totalChars / totalTime) ;
-        const accuracy = Math.round((correctChars / totalChars) * 100) ;
+        const wpm = Math.round((correctChars / 5) / (totalTime / 60));
+        const cpm = Math.round(totalChars / (totalTime / 60));
+        const accuracy = Math.round((correctChars / totalChars) * 100);
         const ratingEarned = Math.floor(accuracy * 0.4 + level * 3 + wpm * 0.3);
         storeContestResult(wpm, cpm, accuracy, ratingEarned);
         showResultBox(wpm, cpm, accuracy, ratingEarned);
     }
 
-
     async function storeContestResult(wpm, cpm, accuracy, ratingEarned) {
-
         const email = currentUser.email;
-        const timestamp = new Date(); //gets current data and time
-        const todayDate = timestamp.toLocaleDateString(); //formats date
-        
+        const timestamp = new Date();
+        const todayDate = timestamp.toLocaleDateString(); 
 
         const contestData = {
             wpm,
             cpm,
             accuracy,
             rating: ratingEarned,
-            date: timestamp.toLocaleDateString(), //date use krli timestamp se
-            time: timestamp.toLocaleTimeString(), //time use krlia timestamp se
+            date: timestamp.toLocaleDateString(),
+            time: timestamp.toLocaleTimeString(),
         };
 
-        const userDocRef = doc(db, "results", email);  //refer krdiya 'results' collection ko
-
+        const userDocRef = doc(db, "results", email);
         try {
             await setDoc(userDocRef, {
-                contests: arrayUnion(contestData)  // Add contestData to the contests array, using arrayUnion to avoid duplicates
-            }, { merge: true });  //ensures that existing fields in doc are not overwritten..it just adds or updtes array
+                contests: arrayUnion(contestData)
+            }, { merge: true });
 
-         
             const userRef = doc(db, "users", email);
             const userDoc = await getDoc(userRef);
 
             let totalRating = ratingEarned;
-
-         
-                const currentRating = userDoc.data().rating;
-                totalRating = currentRating + ratingEarned;  
+            const currentRating = userDoc.data().rating;
+            totalRating = currentRating + ratingEarned;  
 
             await updateDoc(userRef, {
-                rating: totalRating //rating ko update kr diya 'users' collection me
+                rating: totalRating
             });
 
             console.log("Contest results and rating saved successfully:", contestData);
@@ -195,7 +184,6 @@
             console.error("Error storing contest results and updating rating:", error);
         }
     }
-
 
     function showResultBox(wpm, cpm, accuracy, ratingEarned) {
         document.body.innerHTML = "";
@@ -217,10 +205,9 @@
         });
     }
 
-
-    function keydownListener(event) { //listens when key is pressed down
-        const key = event.key; //.key stores character that was pressed
-        if (key.length === 1 && !event.ctrlKey ) { //checks ki length ko key 1 ho coz ctrl+ kch dba rhe ho kya pta  and voh key modifier keys na ho
+    function keydownListener(event) {
+        const key = event.key;
+        if (key.length === 1 && !event.ctrlKey ) {
             handleTyping(key);
         } else if (key === "Backspace") {
             handleBackspace();
@@ -229,37 +216,35 @@
 
     function handleTyping(key) {
         const textArea = document.querySelector("#text-area");
-        const chars = textArea.querySelectorAll("span"); //selects up all the spans, basically characters
+        const chars = textArea.querySelectorAll("span");
 
-        if (typedText.length < chars.length) { //checks if user has typed text is less than total number of characters in chars array
-            typedText += key; //adding the typed key to typed text string
-            totalChars++; //total chars typed bhi bdha diye (for cpm)
+        if (typedText.length < chars.length) {
+            typedText += key;
+            totalChars++;
 
-            const currentCharIndex = typedText.length - 1;//This variable stores the index of the current character being typed (it's always the last character in typedText since we are adding to it).
+            const currentCharIndex = typedText.length - 1;
             if (key === chars[currentCharIndex].innerText) {
                 chars[currentCharIndex].classList.remove("default");
-                chars[currentCharIndex].classList.add("correct"); //giving green color to correct text
+                chars[currentCharIndex].classList.add("correct");
                 correctChars++;
             } else {
                 chars[currentCharIndex].classList.remove("default");
                 chars[currentCharIndex].classList.add("incorrect");
             }
 
-            if (typedText.length === chars.length) { //checks if user has finished typing all chars of current line
-                currentLineIndex++; //increments line index
-                
-                    displayCurrentLine(); //fr vhi process repeat
-                } 
-            }
+            if (typedText.length === chars.length) {
+                currentLineIndex++; 
+                displayCurrentLine(); 
+            } 
         }
-    
+    }
 
     function handleBackspace() {
         if (typedText.length > 0) {
-            typedText = typedText.slice(0, -1); //remove the last char typed (0th index vla)
+            typedText = typedText.slice(0, -1); 
             const textArea = document.querySelector("#text-area");
             const chars = textArea.querySelectorAll("span");
-            const currentCharIndex = typedText.length; //determine index of char being typed
+            const currentCharIndex = typedText.length;
 
             if (chars[currentCharIndex].classList.contains("correct")) {
                 correctChars--;
@@ -270,12 +255,19 @@
         }
     }
 
+    function updateStats() {
+        const wpm = Math.round((correctChars / 5) / (totalTime / 60));
+        const cpm = Math.round(totalChars / (totalTime / 60));
+        const accuracy = Math.round((correctChars / totalChars) * 100);
+
+        document.querySelector("#wpm").innerText = `WPM: ${wpm}`;
+        document.querySelector("#cpm").innerText = `CPM: ${cpm}`;
+        document.querySelector("#accuracy").innerText = `Accuracy: ${accuracy}%`;
+    }
 
     document.addEventListener("keydown", keydownListener);
     generateText();
-</script>
+  </script>
 
 </body>
 </html>
-
-
