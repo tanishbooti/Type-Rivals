@@ -61,6 +61,7 @@
     background: chartreuse;
     color: black;
     border: none;
+
     cursor: pointer;
     transition: transform 0.3s ease, background 0.3s ease;
   }
@@ -112,36 +113,7 @@
   }
   
 
-  @media (max-width: 768px) {
-    img {
-      width: 30vw;
-    }
-  
-    .btn {
-      font-size: 0.9rem;
-      padding: 8px 15px;
-    }
-  
-    .info {
-      width: 90%;
-    }
-  
-    .subinfo {
-      font-size: 0.9rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .btn {
-      font-size: 0.8rem;
-      padding: 6px 10px;
-    }
-  
-    .subinfo {
-      font-size: 0.8rem;
-    }
-  }
-
+ 
   .edit-input{
     background-color: transparent;
     color: white;
@@ -171,10 +143,14 @@
     border: none;
     cursor: pointer;
     transition: transform 0.3s ease, background 0.3s ease;
-    margin-top: 7%;
+    margin-top: 25%;
   }
 
   .logout:hover, .contest-history-btn:hover{
     transform: scale(1.1);
     background: chartreuse;
+  }
+
+  .logout{
+    margin-top: 10vh;
   }
