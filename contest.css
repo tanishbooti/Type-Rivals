@@ -1,4 +1,4 @@
-:root{
+:root{ /*targets full html */
     --bgColor: #333;
     --textPrimary: #fff;
     --textSecondary: #9c9595;
@@ -50,8 +50,8 @@
     font-family: 'Roboto Mono', monospace;
     padding: 20px;
     position: relative;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
+    white-space: pre-wrap; /*Sequences of white space are preserved.*/
+    
     font-weight: 600;
     animation: fadeIn 1s;
   }
@@ -179,18 +179,3 @@
 }
 
 
-@media (max-width: 600px) {
-  #result-box {
-      width: 90%;
-  }
-  #result-box h2 {
-      font-size: 20px;
-  }
-  .result-item {
-      font-size: 16px;
-  }
-  #thank-you-button {
-      font-size: 14px;
-      padding: 8px 16px;
-  }
-}
