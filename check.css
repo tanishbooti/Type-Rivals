@@ -22,7 +22,7 @@ body{
 img{
     height: 6rem;
     width: 8rem;
-    margin: auto;
+    margin-top: 10vh;
 }
 
 input{
