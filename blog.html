@@ -16,8 +16,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@100...900&family=Merriweather:wght@300&family=Montserrat:wght@100..900&family=Roboto&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="blog.css">
     <link rel="icon" href="typelogo.jpeg" />
+    <style>
+        
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            font-size: smaller;
+            align-items: center;
+            background-color: #121212;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            font-weight: 300;
+            line-height: small;
+            height: 3vh;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            font-family: 'Poppins';
+        }
+
+        .navbar a {
+            color: white;
+            font-size: smaller;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-family: 'Poppins';
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: chartreuse;
+            opacity: 0.9;
+            color: black;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        
+       
+    </style>
 </head>
 <body>
+    <!-- Navbar at the top -->
+    <div class="navbar">
+        <a href="index.html">Home Page</a>
+        <a href="profile.html">Profile</a>
+        <a href="friends.html">Friends</a>
+        <a href="history.html">Progress</a>
+        <a href="battleground.html">Battleground</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="check.html">Check Gears</a>
+        <a href="faq.html">Help</a>
+        <a href="feedback.html">Rate Us</a>
+
+        
+    
+    </div>
+
+
+
     <div class="left">
         <div class="heading">
             <img src="typelogo.jpeg">
@@ -65,17 +124,17 @@
         measurementId: "G-3KW6XR5BQR",
     };
 
-const now = new Date();
+    const now = new Date(); //now holds day month date year hr:min:sec GMT+0000 
 
-const hours = now.getHours().toString().padStart(2, '0'); 
-const minutes = now.getMinutes().toString().padStart(2, '0');
-const day = now.getDate().toString().padStart(2, '0'); 
-const month = (now.getMonth() + 1).toString().padStart(2, '0'); 
-const year = now.getFullYear();
+    const hours = now.getHours()// retreives hours in 24 hr format
+    .toString()//converting to string
+    .padStart(2, '0'); //ensuring that hour consists of 2 digits otherwise 0 to be put in start
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0'); 
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');  //months are 0th indexed
+    const year = now.getFullYear();
 
-
-const formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
-
+    const formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -87,7 +146,7 @@ const formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
     const blogList = document.getElementById("blog-list");
 
     let currentUser = null;
-    let userName = "Anonymous"; 
+    let userName; 
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
@@ -97,59 +156,55 @@ const formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
 
         currentUser = user;
 
-        // Fetch user data using the UID
+        //fetching user in 'users' collection
         const userDoc = await getDoc(doc(db, "users", user.email));
-        const userData = userDoc.exists() ? userDoc.data() : {}; 
+        const userData =  userDoc.data(); 
         userName = userData.name 
-
         loadBlogs(); 
     });
 
+    const loadBlogs = async () => { 
+        blogList.innerHTML = ""; //clears any existing text
 
-const loadBlogs = async () => {
-    blogList.innerHTML = ""; 
+        const blogsRef = collection(db, "blogs"); //referring blog collection
+        const q = query(blogsRef, orderBy("timestamp", "desc")); //query to fetch blogs ordered by timestamp in descending order
 
-    const blogsRef = collection(db, "blogs"); 
-    const q = query(blogsRef, orderBy("timestamp", "desc")); 
+        const querySnapshot = await getDocs(q); //executes query and waits for results
 
-    const querySnapshot = await getDocs(q); 
-
-    querySnapshot.forEach((docSnapshot) => {
-        const blog = docSnapshot.data(); 
-        const blogElement = document.createElement("div");
-        blogElement.className = "blog-item";
-
-
-        blogElement.innerHTML = `
-            <h3>${blog.title}</h3>
-            <p>${blog.content}</p>
-            <div class="author"><p>- ${blog.authorName}<br>${formattedTimestamp}</p></div>
-        `;
-        
-  
-        if (blog.authorId === currentUser.uid) {
-            const actionBtnDiv = document.createElement("div");
-            actionBtnDiv.classList.add("actionbtn");
+        querySnapshot.forEach((docSnapshot) => { //checking each doc now
+            const blog = docSnapshot.data(); //retreives data from that doc
+            const blogElement = document.createElement("div");
+            blogElement.className = "blog-item";
+            blogElement.innerHTML = `
+                <h3>${blog.title}</h3>
+                <p>${blog.content}</p>
+                <div class="author"><p>- ${blog.authorName}<br>${formattedTimestamp}</p></div>
+            `;
             
-            const editButton = document.createElement("button");
-            editButton.classList.add("edit-btn");
-            editButton.innerHTML = `<i class="fa-solid fa-pen"></i> `;
-            editButton.onclick = () => editBlog(docSnapshot.id, blog.title, blog.content); 
+            //agr author id vli field in doc and current user ki uid same h toh option to edit dediya
+            if (blog.authorId === currentUser.uid) {
+                const actionBtnDiv = document.createElement("div");
+                actionBtnDiv.classList.add("actionbtn");
+                
+                const editButton = document.createElement("button");
+                editButton.classList.add("edit-btn");
+                editButton.innerHTML = `<i class="fa-solid fa-pen"></i> `;
+                editButton.onclick = () => editBlog(docSnapshot.id, blog.title, blog.content); 
 
-            const deleteButton = document.createElement("button");
-            deleteButton.classList.add("delete-btn");
-            deleteButton.innerHTML = `<i class="fa-solid fa-trash"></i> `;
-            deleteButton.onclick = () => deleteBlog(docSnapshot.id); 
+                const deleteButton = document.createElement("button");
+                deleteButton.classList.add("delete-btn");
+                deleteButton.innerHTML = `<i class="fa-solid fa-trash"></i> `;
+                deleteButton.onclick = () => deleteBlog(docSnapshot.id); 
 
-            actionBtnDiv.appendChild(editButton);
-            actionBtnDiv.appendChild(deleteButton);
+                actionBtnDiv.appendChild(editButton);
+                actionBtnDiv.appendChild(deleteButton);
 
-            blogElement.appendChild(actionBtnDiv);
-        }
+                blogElement.appendChild(actionBtnDiv);
+            }
 
-        blogList.appendChild(blogElement);
-    });
-};
+            blogList.appendChild(blogElement);
+        });
+    };
 
     postButton.addEventListener("click", async () => {
         const title = titleInput.value.trim();
@@ -168,7 +223,7 @@ const loadBlogs = async () => {
                 authorName: userName,
                 authorId: currentUser.uid, 
                 timestamp: formattedTimestamp,
-            });
+            }); //new blog store ho gya and display bhi ho gya
 
             titleInput.value = "";
             blogInput.value = "";
@@ -178,14 +233,13 @@ const loadBlogs = async () => {
         }
     });
 
-
     window.editBlog = async (docId, title, content) => {
         const newTitle = prompt("Edit title:", title);
         const newContent = prompt("Edit content:", content);
 
         if (newTitle && newContent) {
             const blogRef = doc(db, "blogs", docId);
-            await updateDoc(blogRef, {
+            await updateDoc(blogRef, { //updating the doc
                 title: newTitle,
                 content: newContent,
             });
@@ -193,7 +247,6 @@ const loadBlogs = async () => {
             loadBlogs(); 
         }
     };
-
 
     window.deleteBlog = async (docId) => {
         if (confirm("Are you sure you want to delete this blog?")) {
