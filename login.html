@@ -77,18 +77,9 @@
                     const errorCode = error.code;
                     const errorMessageText = error.message;
 
-                    errorMessage.textContent = '';
+                    errorMessage.textContent = 'Error encountered! Please try again later';
 
-                    if (errorCode === 'auth/wrong-password') {
-                        errorMessage.textContent = "Incorrect password. Please try again.";
-                    } else if (errorCode === 'auth/user-not-found') {
-                        errorMessage.textContent = "You haven't signed up yet. Click on 'Sign Up' to create an account.";
-                    } else if (errorCode === 'auth/invalid-email') {
-                        errorMessage.textContent = "Please enter a valid email address.";
-                    } else {
-                        errorMessage.textContent = "Error: " + errorMessageText;
-                    }
-                    console.log(errorCode, errorMessageText);
+                    
                 });
         });
 
@@ -97,24 +88,7 @@
             window.location.href = "index.html";
         });
 
-        forgotPasswordLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            if (email) {
-                sendPasswordResetEmail(auth, email)
-                    .then(() => {
-                        alert('Password reset email sent!');
-                    })
-                    .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessageText = error.message;
-                        alert(errorMessageText);
-                    });
-            } else {
-                alert('Please enter your email to reset the password.');
-            }
-        });
-
+        
        
     </script>
 </body>
