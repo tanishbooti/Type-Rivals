@@ -14,6 +14,14 @@ img{
     width: 6rem;
 }
 
+.main {
+    height: 100vh;
+    overflow-y: auto;
+   
+    padding-bottom: 100px; 
+  
+  }
+  
 
 
 a {
@@ -142,7 +150,7 @@ h1, h2 {
     background: white;
     color: black;
     border: none;
-    cursor: pointer;
+    cursor: hand;
     transition: 0.2s;
     
 }
@@ -203,7 +211,7 @@ h1, h2 {
 
 .dropdown-menu {
     display: none;
-    position: absolute;
+    position: absolute; /* making its position rel to its nearest positioned ancestor */
     top: 60px;
     right: 0;
     background-color: white;
@@ -219,14 +227,14 @@ h1, h2 {
 
 .menu-option {
     padding: 10px 15px;
-    cursor: pointer;
+    cursor: hand;
     transition: background-color 0.3s;
     border: 1px solid black;
     font-weight: 500;
 }
 
 .menu-option:last-child {
-    border-bottom: none;
+    border-bottom: none; /* targetting last child of menu option */
 }
 
 .menu-option:hover {
