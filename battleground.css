@@ -106,7 +106,7 @@ header {
 }
 
 
-@keyframes gradient {
+@keyframes gradient { 
     0% {
         background: linear-gradient(90deg, rgba(255, 85, 85, 1) 0%, rgba(0, 255, 255, 1) 100%);
     }
