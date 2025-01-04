@@ -20,12 +20,72 @@
       rel="icon"
       href="typelogo.jpeg"
     />
-  </head>
-  <body>
+
+    <style>
+        
+      .navbar {
+          display: flex;
+          justify-content: space-around;
+          font-size: smaller;
+          align-items: center;
+          background-color: #121212;
+          padding: 10px 0;
+          position: fixed;
+          top: 0;
+          width: 100%;
+          z-index: 1000;
+          font-weight: 300;
+          line-height: small;
+          height: 3vh;
+          border-bottom: 2px solid rgba(255,255,255,0.3);
+          font-family: 'Poppins';
+      }
+
+      .navbar a {
+          color: white;
+          font-size: smaller;
+          text-decoration: none;
+          padding: 10px 20px;
+          font-size: 16px;
+          font-family: 'Poppins';
+          transition: background-color 0.3s ease;
+      }
+
+      .navbar a:hover {
+          background-color: chartreuse;
+          opacity: 0.9;
+          color: black;
+          border-radius: 5px;
+          font-weight: 500;
+      }
+
+      
+     
+  </style>
+</head>
+<body>
+  <!-- Navbar at the top -->
+  <div class="navbar">
+      <a href="index.html">Home Page</a>
+      <a href="profile.html">Profile</a>
+      <a href="friends.html">Friends</a>
+      <a href="history.html">Progress</a>
+      <a href="blog.html">Blogs</a>
+      <a href="battleground.html">Battleground</a>
+      <a href="check.html">Check Gears</a>
+      <a href="faq.html">Help</a>
+      <a href="feedback.html">Rate Us</a>
+
+      
+  
+  </div>
+
+  
+ 
     <div class="main">
       <div class="nav-bar">
-        <button class="btn sort" id="sortByCityBtn">Sort By City</button>
-        <button class="btn home">Home Page</button>
+        <button class="btn sort" id="sortByCityBtn">Check my city's leaderboard</button>
+        
       </div>
       <h1 class="heading">Leaderboard</h1>
       <table id="leaderboard-table" class="leaderboard-table">
@@ -58,7 +118,6 @@
         measurementId: "G-3KW6XR5BQR"
       };
 
-      
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
       const auth = getAuth(app);
@@ -66,48 +125,43 @@
       let currentUserCity = "";
       let isCitySort = false; 
 
-
+      
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           try {
             const userDocRef = doc(db, "users", user.email); 
             const userDoc = await getDoc(userDocRef);
-
-            if (userDoc.exists()) {
-              currentUserCity = userDoc.data().city;
-              populateLeaderboard(); 
-            } else {
-              console.error("User document not found.");
-            }
+            currentUserCity = userDoc.data().city;
+            populateLeaderboard(); // Load leaderboard 
           } catch (error) {
             console.error("Error fetching user data:", error);
           }
         } else {
-          
-          console.log("User is signed out.");
-          
+          window.location.href = 'login.html'; 
         }
       });
 
+      // Function to populate leaderboard table
       async function populateLeaderboard(cityFilter = null) {
         const leaderboardTableBody = document.querySelector("#leaderboard-table tbody");
         leaderboardTableBody.innerHTML = ""; 
 
         try {
-          const usersCollection = collection(db, "users");
+          const users = collection(db, "users");
           let q;
 
+          // Check if a city filter is provided, and query accordingly
           if (cityFilter) {
-            q = query(usersCollection, where("city", "==", cityFilter), orderBy("rating", "desc"));
+            q = query(users, where("city", "==", cityFilter), orderBy("rating", "desc"));
           } else {
-            q = query(usersCollection, orderBy("rating", "desc")); 
+            q = query(users, orderBy("rating", "desc"));
           }
 
           const querySnapshot = await getDocs(q);
 
           if (querySnapshot.empty) {
             leaderboardTableBody.innerHTML =
-              "<tr><td colspan='4'>No users found.</td></tr>"; 
+              "<tr><td colspan='4'>No users found.</td></tr>";
           } else {
             let rank = 1;
             querySnapshot.forEach((doc) => {
@@ -117,7 +171,7 @@
               const row = document.createElement("tr");
               row.innerHTML = `
                 <td>${rank}</td>
-                <td>${name || "Anonymous"}</td>
+                <td>${name}</td>
                 <td>${rating || 0}</td>
                 <td>${city}</td>
               `;
@@ -132,17 +186,17 @@
         }
       }
 
-      
+     
       document.getElementById("sortByCityBtn").addEventListener("click", async () => {
-        isCitySort = !isCitySort; 
+        isCitySort = !isCitySort;
 
         const sortByCityBtn = document.getElementById("sortByCityBtn");
         sortByCityBtn.textContent = isCitySort ? "Overall Leaderboard" : "Sort By City";
 
         if (isCitySort) {
-          populateLeaderboard(currentUserCity); 
+          populateLeaderboard(currentUserCity); // Show leaderboard sorted by user's city
         } else {
-          populateLeaderboard(); 
+          populateLeaderboard(); // Show overall leaderboard sorted by rating
         }
       });
     </script>
