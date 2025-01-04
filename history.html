@@ -8,8 +8,66 @@
     <title>Contest History</title>
     <link rel="stylesheet" href="history.css">
     <link rel="icon" href="typelogo.jpeg">
+    <style>
+        
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            font-size: smaller;
+            align-items: center;
+            background-color: #121212;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            font-weight: 300;
+            line-height: small;
+            height: 3vh;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            font-family: 'Poppins';
+        }
+
+        .navbar a {
+            color: white;
+            font-size: smaller;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-family: 'Poppins';
+            width: fit-content;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: chartreuse;
+            opacity: 0.9;
+            color: black;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        
+       
+    </style>
 </head>
 <body>
+    <!-- Navbar at the top -->
+    <div class="navbar">
+        <a href="index.html">Home Page</a>
+        <a href="profile.html">Profile</a>
+        <a href="friends.html">Friends</a>
+        <a href="battleground.html">Battleground</a>
+        <a href="blog.html">Blogs</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="check.html">Check Gears</a>
+        <a href="faq.html">Help</a>
+        <a href="feedback.html">Rate Us</a>
+
+        
+    
+    </div>
+
     <div class="container">
         <h1>Your Contest History</h1>
         <div id="history-section" class="history-grid">
@@ -57,7 +115,7 @@
                     if (userDocSnap.exists()) {
                         const data = userDocSnap.data();
                         const contests = data.contests || [];
-
+                        
                         if (contests.length === 0) {
                             displayNoHistoryMessage();
                         } else {
