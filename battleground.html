@@ -7,18 +7,74 @@
     <link rel="stylesheet" href="battleground.css">
     <link rel="icon" href="typelogo.jpeg" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            font-size: smaller;
+            align-items: center;
+            background-color: #121212;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            font-weight: 300;
+            line-height: small;
+            height: 3vh;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            font-family: 'Poppins';
+        }
+
+        .navbar a {
+            color: white;
+            font-size: smaller;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-family: 'Poppins';
+            width: fit-content;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: chartreuse;
+            opacity: 0.9;
+            color: black;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        
+       
+    </style>
 </head>
 <body>
+    <!-- Navbar at the top -->
+    <div class="navbar">
+        <a href="index.html">Home Page</a>
+        <a href="profile.html">Profile</a>
+        <a href="friends.html">Friends</a>
+        <a href="history.html">Progress</a>
+        <a href="blog.html">Blogs</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="check.html">Check Gears</a>
+        <a href="faq.html">Help</a>
+        <a href="feedback.html">Rate Us</a>
+
+        
+    
+    </div>
+
+
     <div id="battleground-container">
         <header>
             <h1>Battlefield Path</h1>
-
         </header>
 
-       
         <div id="user-status"></div>
 
-        \
         <div id="battlegrounds-container">
             
         </div>
@@ -26,110 +82,81 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
+            authDomain: "type-rivals-73388.firebaseapp.com",
+            projectId: "type-rivals-73388",
+            storageBucket: "type-rivals-73388.appspot.com",
+            messagingSenderId: "720102342621",
+            appId: "1:720102342621:web:059d97edcd7e9a9537c034",
+            measurementId: "G-3KW6XR5BQR"
+        };
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
-    authDomain: "type-rivals-73388.firebaseapp.com",
-    projectId: "type-rivals-73388",
-    storageBucket: "type-rivals-73388.appspot.com",
-    messagingSenderId: "720102342621",
-    appId: "1:720102342621:web:059d97edcd7e9a9537c034",
-    measurementId: "G-3KW6XR5BQR"
-};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
+        let currentUser = null;
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let currentUser = null;
-
-
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        currentUser = user;
-        const userDoc = await getDoc(doc(db, "users", user.email));
-            const userData = userDoc.exists() ? userDoc.data() : {};
-        document.getElementById("user-status").innerHTML = `<h1>Welcome, ${userData.name}!</h1><br><h3>Your current ratings: ${userData.rating}`;
-        await loadUserProfile(user.email);
-    } else {
-        document.getElementById("user-status").innerText = "You must be logged in to view battlegrounds.";
-    }
-});
-
-
-async function loadUserProfile(email) {
-    try {
-        const userRef = doc(db, "users", email);
-        const userDoc = await getDoc(userRef);
-
-        if (userDoc.exists()) {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDoc = await getDoc(doc(db, "users", user.email)); //makes the function wait till promise resolves or rejects
             const userData = userDoc.data();
-            const rating = userData.rating || 0;
-            displayBattlegrounds(rating);
-        } else {
-            console.log("No such user!");
-            document.getElementById("user-status").innerText = "User profile not found.";
-        }
-    } catch (error) {
-        console.error("Error loading user profile:", error);
-        document.getElementById("user-status").innerText = "Error loading profile.";
-    }
-}
-
-
-function displayBattlegrounds(userRating) {
-    const battlegrounds = [
-        { name: "Beginner Arena", requiredRating: 0, description: "Start your journey here" },
-        { name: "Bronze Battlefield", requiredRating: 100, description: "A place for those who have begun their ascent" },
-        { name: "Silver Arena", requiredRating: 250, description: "Prove your mettle in the silver league" },
-        { name: "Gold Colosseum", requiredRating: 500, description: "For those who have mastered their speed" },
-        { name: "Platinum Plains", requiredRating: 750, description: "The battlefield for the elite typists" },
-        { name: "Diamond Domain", requiredRating: 1000, description: "Only the best typists survive here" },
-        { name: "Master's Arena", requiredRating: 1500, description: "Test yourself against the top tier" },
-        { name: "Legendary Battleground", requiredRating: 2000, description: "Only legends roam these fields" },
-        { name: "Champion's Court", requiredRating: 3000, description: "Where only the fastest dare to compete" },
-        { name: "Godlike Arena", requiredRating: 5000, description: "Reach godlike speed and enter here" }
-    ];
-
-    const battlegroundsContainer = document.getElementById("battlegrounds-container");
-    battlegroundsContainer.innerHTML = "";
-
-    battlegrounds.forEach((bg) => {
-        const battlegroundCard = document.createElement("div");
-        battlegroundCard.classList.add("battleground-card");
-
-        if (userRating >= bg.requiredRating) {
-            if (bg.name === "Legendary Battleground") {
-                battlegroundCard.classList.add("legendaried");
+                document.getElementById("user-status").innerHTML = `<h1>Welcome, ${userData.name}!</h1><br><h3>Your current ratings: ${userData.rating}</h3>`;
+               displayBattlegrounds(userData.rating)
+            } else {
+                document.getElementById("user-status").innerText = "You must be logged in to view battlegrounds.";
             }
+        });
+
+   
+
+        function displayBattlegrounds(userRating) {
+            const battlegrounds = [
+                { name: "Beginner Arena", requiredRating: 0, description: "Start your journey here" },
+                { name: "Bronze Battlefield", requiredRating: 100, description: "A place for those who have begun their ascent" },
+                { name: "Silver Arena", requiredRating: 250, description: "Prove your mettle in the silver league" },
+                { name: "Gold Colosseum", requiredRating: 500, description: "For those who have mastered their speed" },
+                { name: "Platinum Plains", requiredRating: 750, description: "The battlefield for the elite typists" },
+                { name: "Diamond Domain", requiredRating: 1000, description: "Only the best typists survive here" },
+                { name: "Master's Arena", requiredRating: 1500, description: "Test yourself against the top tier" },
+                { name: "Legendary Battleground", requiredRating: 2000, description: "Only legends roam these fields" },
+                { name: "Champion's Court", requiredRating: 3000, description: "Where only the fastest dare to compete" },
+                { name: "Godlike Arena", requiredRating: 5000, description: "Reach godlike speed and enter here" }
+            ];
+
+            const battlegroundsContainer = document.getElementById("battlegrounds-container");
+            battlegroundsContainer.innerHTML = "";
+
+            battlegrounds.forEach((bg) => { //object item pe for each loop chla diya
+                const battlegroundCard = document.createElement("div");
+                battlegroundCard.classList.add("battleground-card");
+
+             
+                if (userRating >= bg.requiredRating) {
+                    battlegroundCard.classList.remove("darkened");
+                } else {
+                    battlegroundCard.classList.add("darkened");
+                }
+
+                const battlegroundName = document.createElement("div");
+                battlegroundName.classList.add("battleground-name");
+                battlegroundName.innerText = bg.name;
+
+                const battlegroundInfo = document.createElement("div");
+                battlegroundInfo.classList.add("battleground-info");
+                battlegroundInfo.innerHTML = `<div>${bg.description} </div><div> Rating required: ${bg.requiredRating} </div>`;
+
+                battlegroundCard.appendChild(battlegroundName);
+                battlegroundCard.appendChild(battlegroundInfo);
+
+                battlegroundsContainer.appendChild(battlegroundCard);
+            });
         }
-
-        
-        if (userRating >= bg.requiredRating) {
-            battlegroundCard.classList.remove("darkened");
-        } else {
-            battlegroundCard.classList.add("darkened");
-        }
-
-        const battlegroundName = document.createElement("div");
-        battlegroundName.classList.add("battleground-name");
-        battlegroundName.innerText = bg.name;
-
-        const battlegroundInfo = document.createElement("div");
-        battlegroundInfo.classList.add("battleground-info");
-        battlegroundInfo.innerText = `${bg.description} - Rating required: ${bg.requiredRating}`;
-
-        battlegroundCard.appendChild(battlegroundName);
-        battlegroundCard.appendChild(battlegroundInfo);
-
-        battlegroundsContainer.appendChild(battlegroundCard);
-    });
-}
-
     </script>
 </body>
 </html>
