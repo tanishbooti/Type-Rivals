@@ -6,16 +6,8 @@
     <title>Friends List</title>
     <link rel="stylesheet" href="friends.css">
     <link rel="icon" href="typelogo.jpeg" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-      integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
 </head>
 <style>
-        
     .navbar {
         display: flex;
         justify-content: space-around;
@@ -53,46 +45,83 @@
         font-weight: 500;
     }
 
-    
-   
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #121212;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 600px;
+        width: 80%;
+        position: relative;
+        color: white;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+    }
+
+    .close-btn:hover {
+        color: red;
+    }
 </style>
-</head>
 <body>
 
-<div class="navbar">
-    <a href="index.html">Home Page</a>
-    <a href="profile.html">Profile</a>
-    <a href="friends.html">Friends</a>
-    <a href="history.html">Progress</a>
-    <a href="blog.html">Blogs</a>
-    <a href="leaderboard.html">Leaderboard</a>
-    <a href="check.html">Check Gears</a>
-    <a href="faq.html">Help</a>
-    <a href="feedback.html">Rate Us</a>
-
-    
-
-</div>
+    <div class="navbar">
+        <a href="index.html">Home Page</a>
+        <a href="profile.html">Profile</a>
+        <a href="friends.html">Friends</a>
+        <a href="history.html">Progress</a>
+        <a href="blog.html">Blogs</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="check.html">Check Gears</a>
+        <a href="faq.html">Help</a>
+        <a href="feedback.html">Rate Us</a>
+    </div>
 
     <div class="header">
         <h1>Friends List</h1>
     </div>
+
     <div class="search-container">
         <input type="text" id="search-bar" placeholder="Search by username...">
         <button id="search-btn">Search</button>
     </div>
+
     <div id="search-results"></div>
+
     <h2>Your Friends</h2>
     <div id="friends-list"></div>
 
     <div id="modal" class="modal">
         <div class="modal-content">
+            <span class="close-btn" id="modal-close-btn">&times;</span>
             
-            <h2 id="friend-name"></h2><i class="fa-solid fa-minus close-btn" id="clode-modal"></i>
+            <div class="main">
+                <h2 id="friend-name"></h2>
+            </div>
+
             <p><strong>Username:</strong> <span id="friend-username"></span></p>
             <p><strong>Email:</strong> <span id="friend-email"></span></p>
             <p><strong>City:</strong> <span id="friend-city"></span></p>
             <p><strong>Rating:</strong> <span id="friend-rating"></span></p>
+
             <h3>Contest History:</h3>
             <table id="contest-history-table" border="1">
                 <thead>
@@ -112,7 +141,7 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, arrayUnion, query, where } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-        
+
         const firebaseConfig = {
             apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
             authDomain: "type-rivals-73388.firebaseapp.com",
@@ -122,13 +151,13 @@
             messagingSenderId: "720102342621",
             appId: "1:720102342621:web:059d97edcd7e9a9537c034"
         };
-        
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        
+
         let currentUser = null;
-        
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -137,18 +166,15 @@
                 window.location.href = "login.html";
             }
         });
-        
+
         async function loadFriends() {
-            
             const userDoc = await getDoc(doc(db, "users", currentUser.email));
-            
             const friends = userDoc.data().friends;
             const friendsList = document.getElementById('friends-list');
             friendsList.innerHTML = "";
-    
-            // Store all friends data to later use in search
+
             window.allFriendsData = [];
-    
+
             for (const friend of friends) {
                 const friendDoc = await getDoc(doc(db, "users", friend.email));
                 if (friendDoc.exists()) {
@@ -164,7 +190,7 @@
                     friendsList.appendChild(div);
                 }
             }
-        
+
             document.querySelectorAll('.view-stats-btn').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const email = e.target.getAttribute('data-email');
@@ -175,148 +201,97 @@
                 });
             });
         }
-    
+
         function showModal(data) {
             const modal = document.getElementById('modal');
-            document.getElementById('friend-name').textContent = data.name;
+            document.getElementById('friend-name').innerHTML = data.name;
             document.getElementById('friend-username').textContent = data.username;
             document.getElementById('friend-email').textContent = data.email;
-            document.getElementById('friend-city').textContent = data.city || 'N/A';
-            document.getElementById('friend-rating').textContent = data.rating || 'N/A';
-        
+            document.getElementById('friend-city').textContent = data.city;
+            document.getElementById('friend-rating').textContent = data.rating || 0;
+
             loadContestHistory(data.email);
-        
+
             modal.style.display = 'flex';
-        
-            document.getElementById('close-modal').onclick = () => {
-                modal.style.display = 'none';
-            };
         }
-        
-        
-async function loadContestHistory(friendEmail) {
-    const contestHistoryList = document.getElementById('contest-history-list');
-    contestHistoryList.innerHTML = ""; 
-    
-    console.log("Loading contest history for:", friendEmail);
 
-    try {
-       
-        const resultsRef = doc(db, "results", friendEmail); 
-        const resultsDoc = await getDoc(resultsRef);
+        async function loadContestHistory(friendEmail) {
+            const contestHistoryList = document.getElementById('contest-history-list');
+            contestHistoryList.innerHTML = "";
 
-        if (resultsDoc.exists()) {
-            const data = resultsDoc.data();
-            const contests = data.contests;
-
-            if (contests.length > 0) {
-                contests.forEach((contest) => {
-                    // Creating a table row for each contest
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${contest.date}</td>
-                        <td>${contest.accuracy}%</td>
-                        <td>${contest.wpm}</td>
-                        <td>${contest.rating}</td>
-                    `;
-                    contestHistoryList.appendChild(row);
-                });
-            } else {
-                contestHistoryList.innerHTML = "<tr><td colspan='4'>No contest history available.</td></tr>";
-            }
-        } else {
-            contestHistoryList.innerHTML = "<tr><td colspan='4'>No contest history available for this friend.</td></tr>";
-        }
-    } catch (error) {
-        console.error("Error loading contest history:", error);
-        contestHistoryList.innerHTML = "<tr><td colspan='4'>Error loading contest history.</td></tr>";
-    }
-}
-
-    
-        // Search function
-        document.getElementById('search-btn').addEventListener('click', async () => {
-            const searchQuery = document.getElementById('search-bar').value.toLowerCase();
-            const searchResultsContainer = document.getElementById('search-results');
-            searchResultsContainer.innerHTML = "";  
-    
-            
-            const usersRef = collection(db, "users");
-            const querySnapshot = await getDocs(usersRef);
-    
-            const searchResults = [];
-            
-            querySnapshot.forEach((docSnapshot) => {
-                const data = docSnapshot.data();
-                if (data.username.toLowerCase().includes(searchQuery)) {
-                    searchResults.push(data);
-                }
-            });
-    
-            if (searchResults.length > 0) {
-                searchResults.forEach(friend => {
-                    const div = document.createElement('div');
-                    div.className = 'friend';
-                    div.innerHTML = `
-                        <span>${friend.name} (${friend.username})</span>
-                        <span>Rating: ${friend.rating}</span>
-                        <button class="view-stats-btn" data-email="${friend.email}">View Stats</button>
-                        <button class="add-friend-btn" data-email="${friend.email}">Add Friend</button>
-                    `;
-                    searchResultsContainer.appendChild(div);
-                });
-    
-                document.querySelectorAll('.view-stats-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const email = e.target.getAttribute('data-email');
-                        const friendDoc = await getDoc(doc(db, "users", email));
-                        if (friendDoc.exists()) {
-                            showModal(friendDoc.data());
-                        }
-                    });
-                });
-    
-                document.querySelectorAll('.add-friend-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const email = e.target.getAttribute('data-email');
-                        await addFriend(email);
-                    });
-                });
-            } else {
-                searchResultsContainer.innerHTML = "<p>No users found with that username.</p>";
-            }
-        });
-    
-
-        async function addFriend(friendEmail) {
             try {
-                const userDocRef = doc(db, "users", currentUser.email);
-                const userDoc = await getDoc(userDocRef);
-    
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    const friendsList = userData.friends || [];
-    
-                    
-                    if (friendsList.some(friend => friend.email === friendEmail)) {
-                        alert("This user is already your friend.");
-                        return;
+                const resultsRef = doc(db, "results", friendEmail);
+                const resultsDoc = await getDoc(resultsRef);
+
+                if (resultsDoc.exists()) {
+                    const data = resultsDoc.data();
+                    const contests = data.contests;
+
+                    if (contests.length > 0) {
+                        contests.forEach((contest) => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${contest.date}</td>
+                                <td>${contest.accuracy}%</td>
+                                <td>${contest.wpm}</td>
+                                <td>${contest.rating}</td>
+                            `;
+                            contestHistoryList.appendChild(row);
+                        });
+                    } else {
+                        contestHistoryList.innerHTML = "<tr><td colspan='4'>No contest history available.</td></tr>";
                     }
-    
-                    
-                    await updateDoc(userDocRef, {
-                        friends: arrayUnion({ email: friendEmail })
-                    });
-    
-                    alert("Friend added successfully!");
-                    loadFriends();  
+                } else {
+                    contestHistoryList.innerHTML = "<tr><td colspan='4'>No contest history available for this friend.</td></tr>";
                 }
             } catch (error) {
-                console.error("Error adding friend:", error);
-                alert("An error occurred while adding the friend.");
+                console.error("Error loading contest history:", error);
+                contestHistoryList.innerHTML = "<tr><td colspan='4'>Error loading contest history.</td></tr>";
             }
         }
+
+        document.getElementById('modal-close-btn').addEventListener('click', () => {
+            document.getElementById('modal').style.display = 'none';
+        });
+
+        document.getElementById('search-btn').addEventListener('click', async () => {
+            const searchQuery = document.getElementById('search-bar').value.trim();
+            if (!searchQuery) return;
+
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("username", "==", searchQuery));
+            const querySnapshot = await getDocs(q);
+            const searchResults = document.getElementById('search-results');
+            searchResults.innerHTML = "";
+
+            if (querySnapshot.empty) {
+                searchResults.innerHTML = "No users found with that username.";
+            } else {
+                querySnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'search-result';
+                    resultDiv.innerHTML = `
+                        <span>${userData.name} (${userData.username})</span>
+                        <button class="add-friend-btn" data-email="${doc.id}">Add Friend</button>
+                    `;
+                    searchResults.appendChild(resultDiv);
+
+                    resultDiv.querySelector('.add-friend-btn').addEventListener('click', async () => {
+                        await addFriend(doc.id, userData);
+                    });
+                });
+            }
+        });
+
+        async function addFriend(friendEmail, friendData) {
+            const userRef = doc(db, "users", currentUser.email);
+            await updateDoc(userRef, {
+                friends: arrayUnion({ email: friendEmail, username: friendData.username })
+            });
+
+            loadFriends();
+        }
     </script>
-    
 </body>
 </html>
