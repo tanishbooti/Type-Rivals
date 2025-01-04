@@ -159,23 +159,5 @@ body {
 }
 
 
-@media (max-width: 768px) {
-    .badge {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .title-container h1 {
-        font-size: 1.5rem;
-    }
-
-    .countdown {
-        font-size: 2.5rem;
-    }
-
-    .go {
-        font-size: 4rem;
-    }
-}
 
 
