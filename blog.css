@@ -182,25 +182,10 @@ i:hover {
     border-color: chartreuse;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    body {
-        flex-direction: column;
-    }
-    .left, .right {
-        width: 100%;
-        height: auto;
-    }
-    .btn {
-        width: 80vw;
-    }
-    textarea {
-        height: 20vh;
-    }
-}
+
 
 img{
-    height: 4rem;
-    width: 6rem;
-    margin-bottom: 15vh;
+    height: 7rem;
+    width: 12rem;
+    margin-top: 13vh;
 }
