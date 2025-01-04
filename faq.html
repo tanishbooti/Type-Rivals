@@ -6,9 +6,68 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>FAQ - Frequently Asked Questions</title>
     <link rel="icon" href="typelogo.jpeg" />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@100..900&family=Roboto+Mono:wght@100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="faq.css">
+
+<style>
+        
+    .navbar {
+        display: flex;
+        justify-content: space-around;
+        font-size: smaller;
+        align-items: center;
+        background-color: #121212;
+        padding: 10px 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        font-weight: 300;
+        line-height: small;
+        height: 3vh;
+        border-bottom: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .navbar a {
+        color: white;
+        font-size: smaller;
+        text-decoration: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-family: 'Poppins';
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar a:hover {
+        background-color: chartreuse;
+        opacity: 0.9;
+        color: black;
+        border-radius: 5px;
+        font-weight: 500;
+    }
+
+    
+   
+</style>
 </head>
 <body>
+<!-- Navbar at the top -->
+<div class="navbar">
+    <a href="index.html">Home Page</a>
+    <a href="profile.html">Profile</a>
+    <a href="friends.html">Friends</a>
+    <a href="history.html">Progress</a>
+    <a href="blog.html">Blogs</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="check.html">Check Gears</a>
+    <a href="battleground.html">Battleground</a>
+    <a href="feedback.html">Rate Us</a>
+
+    
+
+</div>
+
+
     <div class="container">
         <header>
             <h1>Frequently Asked Questions</h1>
@@ -52,7 +111,7 @@
                     <span class="toggle-icon" id="toggle-icon-4">+</span>
                 </div>
                 <div class="answer" id="answer-4">
-                    <p>Yes, you can view your past contest results under the "My Results" section of your profile.</p>
+                    <p>Yes, you can view your past contest results under the "Contest History" section of your profile.</p>
                 </div>
             </div>
 
@@ -72,7 +131,7 @@
                     <span class="toggle-icon" id="toggle-icon-6">+</span>
                 </div>
                 <div class="answer" id="answer-6">
-                    <p>You can use any device with a keyboard and a modern web browser, such as a computer, laptop, or tablet.</p>
+                    <p>You can use any device with a keyboard and a modern web browser, such as a computer and laptop. Mobiles won't work</p>
                 </div>
             </div>
 
