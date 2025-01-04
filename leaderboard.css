@@ -76,29 +76,7 @@ body {
   }
   
 
-  @media (max-width: 768px) {
-    .leaderboard-table th,
-    .leaderboard-table td {
-      padding: 10px;
-      font-size: 0.9rem;
-    }
-  
-    .heading {
-      font-size: 2.5rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .leaderboard-table th,
-    .leaderboard-table td {
-      padding: 8px;
-      font-size: 0.8rem;
-    }
-  
-    .heading {
-      font-size: 2rem;
-    }
-  }
+ 
   
   .leaderboard-table {
     animation: fadeIn 1s ease-in-out;
@@ -142,6 +120,7 @@ body {
     cursor: pointer;
     transition: 0.2s;
     margin-right: 2vw;
+    margin-top: 10vh;
 }
 
 .btn:hover {
