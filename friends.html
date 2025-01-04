@@ -7,10 +7,68 @@
     <link rel="stylesheet" href="friends.css">
     <link rel="icon" href="typelogo.jpeg" />
 </head>
+<style>
+        
+    .navbar {
+        display: flex;
+        justify-content: space-around;
+        font-size: smaller;
+        align-items: center;
+        background-color: #121212;
+        padding: 10px 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        font-weight: 300;
+        line-height: small;
+        height: 3vh;
+        border-bottom: 2px solid rgba(255,255,255,0.3);
+        font-family: 'Poppins';
+    }
+
+    .navbar a {
+        color: white;
+        font-size: smaller;
+        text-decoration: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-family: 'Poppins';
+        width: fit-content;
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar a:hover {
+        background-color: chartreuse;
+        opacity: 0.9;
+        color: black;
+        border-radius: 5px;
+        font-weight: 500;
+    }
+
+    
+   
+</style>
+</head>
 <body>
+
+<div class="navbar">
+    <a href="index.html">Home Page</a>
+    <a href="profile.html">Profile</a>
+    <a href="friends.html">Friends</a>
+    <a href="history.html">Progress</a>
+    <a href="blog.html">Blogs</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="check.html">Check Gears</a>
+    <a href="faq.html">Help</a>
+    <a href="feedback.html">Rate Us</a>
+
+    
+
+</div>
+
     <div class="header">
         <h1>Friends List</h1>
-        
     </div>
     <div class="search-container">
         <input type="text" id="search-bar" placeholder="Search by username...">
@@ -20,19 +78,14 @@
     <h2>Your Friends</h2>
     <div id="friends-list"></div>
 
- 
     <div id="modal" class="modal">
         <div class="modal-content">
-  
             <span id="close-modal" class="close-btn">&times;</span>
-            
             <h2 id="friend-name"></h2>
             <p><strong>Username:</strong> <span id="friend-username"></span></p>
             <p><strong>Email:</strong> <span id="friend-email"></span></p>
             <p><strong>City:</strong> <span id="friend-city"></span></p>
             <p><strong>Rating:</strong> <span id="friend-rating"></span></p>
-            
- 
             <h3>Contest History:</h3>
             <table id="contest-history-table" border="1">
                 <thead>
@@ -50,9 +103,9 @@
 
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, arrayUnion, query, where } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-    
+        
         const firebaseConfig = {
             apiKey: "AIzaSyDunwV-ji-6mpDuhcCZh9x-G9sP5YulJw8",
             authDomain: "type-rivals-73388.firebaseapp.com",
@@ -62,13 +115,13 @@
             messagingSenderId: "720102342621",
             appId: "1:720102342621:web:059d97edcd7e9a9537c034"
         };
-    
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-    
+        
         let currentUser = null;
-    
+        
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -77,23 +130,23 @@
                 window.location.href = "login.html";
             }
         });
-    
+        
         async function loadFriends() {
-            if (!currentUser || !currentUser.email) {
-                console.error("Current user email not found.");
-                return;
-            }
-    
+            
             const userDoc = await getDoc(doc(db, "users", currentUser.email));
-            if (!userDoc.exists()) return;
-            const friends = userDoc.data().friends || [];
+            
+            const friends = userDoc.data().friends;
             const friendsList = document.getElementById('friends-list');
             friendsList.innerHTML = "";
+    
+            // Store all friends data to later use in search
+            window.allFriendsData = [];
     
             for (const friend of friends) {
                 const friendDoc = await getDoc(doc(db, "users", friend.email));
                 if (friendDoc.exists()) {
                     const data = friendDoc.data();
+                    window.allFriendsData.push(data);
                     const div = document.createElement('div');
                     div.className = 'friend';
                     div.innerHTML = `
@@ -104,7 +157,7 @@
                     friendsList.appendChild(div);
                 }
             }
-    
+        
             document.querySelectorAll('.view-stats-btn').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const email = e.target.getAttribute('data-email');
@@ -123,43 +176,137 @@
             document.getElementById('friend-email').textContent = data.email;
             document.getElementById('friend-city').textContent = data.city || 'N/A';
             document.getElementById('friend-rating').textContent = data.rating || 'N/A';
-    
+        
             loadContestHistory(data.email);
-    
+        
             modal.style.display = 'flex';
-    
+        
             document.getElementById('close-modal').onclick = () => {
                 modal.style.display = 'none';
             };
         }
+        
+        
+async function loadContestHistory(friendEmail) {
+    const contestHistoryList = document.getElementById('contest-history-list');
+    contestHistoryList.innerHTML = ""; 
     
-        async function loadContestHistory(friendEmail) {
-            const contestHistoryList = document.getElementById('contest-history-list');
-            contestHistoryList.innerHTML = ""; 
+    console.log("Loading contest history for:", friendEmail);
+
+    try {
+       
+        const resultsRef = doc(db, "results", friendEmail); 
+        const resultsDoc = await getDoc(resultsRef);
+
+        if (resultsDoc.exists()) {
+            const data = resultsDoc.data();
+            const contests = data.contests;
+
+            if (contests.length > 0) {
+                contests.forEach((contest) => {
+                    // Creating a table row for each contest
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${contest.date}</td>
+                        <td>${contest.accuracy}%</td>
+                        <td>${contest.wpm}</td>
+                        <td>${contest.rating}</td>
+                    `;
+                    contestHistoryList.appendChild(row);
+                });
+            } else {
+                contestHistoryList.innerHTML = "<tr><td colspan='4'>No contest history available.</td></tr>";
+            }
+        } else {
+            contestHistoryList.innerHTML = "<tr><td colspan='4'>No contest history available for this friend.</td></tr>";
+        }
+    } catch (error) {
+        console.error("Error loading contest history:", error);
+        contestHistoryList.innerHTML = "<tr><td colspan='4'>Error loading contest history.</td></tr>";
+    }
+}
+
     
-            console.log("Loading contest history for:", friendEmail);
+        // Search function
+        document.getElementById('search-btn').addEventListener('click', async () => {
+            const searchQuery = document.getElementById('search-bar').value.toLowerCase();
+            const searchResultsContainer = document.getElementById('search-results');
+            searchResultsContainer.innerHTML = "";  
     
-            try {
-                const resultsRef = collection(db, "results");
-                const queryResults = await getDocs(resultsRef);
+            
+            const usersRef = collection(db, "users");
+            const querySnapshot = await getDocs(usersRef);
     
-                let contestFound = false;
-                
-                queryResults.forEach((docSnapshot) => {
-                    const userData = docSnapshot.data();
-                    userData.contests.forEach(contest => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${contest.date }</td>
-                            <td>${contest.accuracy}%</td>
-                            <td>${contest.wpm }</td>
-                            <td>${contest.rating}</td>
-                        `;
-                        contestHistoryList.appendChild(row);
+            const searchResults = [];
+            
+            querySnapshot.forEach((docSnapshot) => {
+                const data = docSnapshot.data();
+                if (data.username.toLowerCase().includes(searchQuery)) {
+                    searchResults.push(data);
+                }
+            });
+    
+            if (searchResults.length > 0) {
+                searchResults.forEach(friend => {
+                    const div = document.createElement('div');
+                    div.className = 'friend';
+                    div.innerHTML = `
+                        <span>${friend.name} (${friend.username})</span>
+                        <span>Rating: ${friend.rating}</span>
+                        <button class="view-stats-btn" data-email="${friend.email}">View Stats</button>
+                        <button class="add-friend-btn" data-email="${friend.email}">Add Friend</button>
+                    `;
+                    searchResultsContainer.appendChild(div);
+                });
+    
+                document.querySelectorAll('.view-stats-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const email = e.target.getAttribute('data-email');
+                        const friendDoc = await getDoc(doc(db, "users", email));
+                        if (friendDoc.exists()) {
+                            showModal(friendDoc.data());
+                        }
                     });
-                })
+                });
+    
+                document.querySelectorAll('.add-friend-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const email = e.target.getAttribute('data-email');
+                        await addFriend(email);
+                    });
+                });
+            } else {
+                searchResultsContainer.innerHTML = "<p>No users found with that username.</p>";
+            }
+        });
+    
+
+        async function addFriend(friendEmail) {
+            try {
+                const userDocRef = doc(db, "users", currentUser.email);
+                const userDoc = await getDoc(userDocRef);
+    
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const friendsList = userData.friends || [];
+    
+                    
+                    if (friendsList.some(friend => friend.email === friendEmail)) {
+                        alert("This user is already your friend.");
+                        return;
+                    }
+    
+                    
+                    await updateDoc(userDocRef, {
+                        friends: arrayUnion({ email: friendEmail })
+                    });
+    
+                    alert("Friend added successfully!");
+                    loadFriends();  
+                }
             } catch (error) {
-                console.error("Error loading contest history:", error);
+                console.error("Error adding friend:", error);
+                alert("An error occurred while adding the friend.");
             }
         }
     </script>
