@@ -32,9 +32,9 @@
           </h3>
         </div>
         <div class="box">
-          <p class="box-title">Daily Challenge <br> <h6> under construction! </h6></p>
+          <p class="box-title">Daily Challenge <br></p>
           <p class="box-desc">Push your limits and rise above the competition!</p>
-          <button class="btn">Attempt Now</button>
+          <button class="btn">Coming soon!</button>
         </div>
         <div class="box">
           <p class="box-title">Rate Us</p>
@@ -55,9 +55,6 @@
                 </div>
                 <div class="menu-option history">
                   <i class="fa-solid fa-clock-rotate-left"></i> Contest History
-                </div>
-                <div class="menu-option settings">
-                  <i class="fa-solid fa-gear"></i> Settings
                 </div>
                 <div class="menu-option faq">
                   <i class="fa-solid fa-info"></i> FAQ
@@ -93,10 +90,10 @@
               </button>
             </div>
             <div class="feature-card">
-              <h3>💥 <strong>Test Your Gear</strong></h3>
-              <p>Is your keyboard fast enough to keep up? Put it to the test and see if it can handle the heat of a real typing showdown!</p>
-              <button class="btn test" style="width: 15%;">
-                Test Your Gear
+              <h3>🕰️  <strong>Check your progress</strong></h3>
+              <p>Relive your journey and see how far you've come in the world of typing challenges.</p>
+              <button class="btn progress" style="width: 15%;">
+               Progress
               </button>
             </div>
             <div class="feature-card">
@@ -110,11 +107,21 @@
               <h3>⚔️ <strong>Your Battleground Journey!</strong></h3>
               <p>Step into the arena and challenge the best. Who will reign supreme on the battleground? Find out now!</p>
               <button class="btn battleground" style="width: 15%;">
-                Enter Battleground
+                Check Battleground
+              </button>
+            </div>
+
+            <div class="feature-card">
+              <h3>💥 <strong>Test Your Gear</strong></h3>
+              <p>Is your keyboard fast enough to keep up? Put it to the test and see if it can handle the heat of a real typing showdown!</p>
+              <button class="btn test" style="width: 15%;">
+                Test Your Gear
               </button>
             </div>
           </div>
         </section>
+
+        <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>  <br> <br> <br> <br> <br> <br> <br> <br>
         
       </main>
     </div>
@@ -142,9 +149,9 @@
         measurementId: "G-3KW6XR5BQR",
       };
 
-      const app = initializeApp(firebaseConfig);
+      const app = initializeApp(firebaseConfig); 
       const auth = getAuth(app);
-      const db = getFirestore(app);
+      const db = getFirestore(app);  
       const userProfile = document.querySelector(".profilebtn");
 
       // User status check and logout handling
@@ -152,7 +159,7 @@
         if (user) {
           try {
             const userDoc = await getDoc(doc(db, "users", user.email));
-            const userData = userDoc.exists() ? userDoc.data() : {};
+            const userData = userDoc.data();
             userProfile.innerText = `${userData.name}`;
 
             document
@@ -169,29 +176,23 @@
             console.error("Error fetching user data:", error);
           }
         } else {
-          // Redirect if the user is not logged in
           window.location.href = "login.html";
         }
       });
 
-      // Profile dropdown menu functionality
       const profileBtn = document.querySelector(".profilebtn");
       const dropdownMenu = document.getElementById("dropdownMenu");
 
       profileBtn.addEventListener("click", () => {
-        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block"; 
       });
 
-      // Close dropdown if clicked outside the menu
-      document.addEventListener("click", (event) => {
-        if (!profileBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
-          dropdownMenu.style.display = "none";
-        }
-      });
-
-      // Redirect to respective pages on menu options click
       document.querySelector(".edit").addEventListener("click", () => {
         window.location.href = "profile.html";
+      });
+
+      document.querySelector(".progress").addEventListener("click", () => {
+        window.location.href = "history.html";
       });
 
       document.querySelector(".history").addEventListener("click", () => {
@@ -206,10 +207,6 @@
         window.location.href = 'faq.html';
       });
 
-      document.querySelector('.settings').addEventListener('click', () => {
-        window.location.href = 'settings.html';
-      });
-
       document.querySelector('.start').addEventListener('click', () => {
         window.location.href = 'customization.html';
       });
@@ -218,11 +215,9 @@
         window.location.href = 'blog.html';
       });
 
-
       document.querySelector('.test').addEventListener('click', () => {
         window.location.href = 'check.html';
       });
-
 
       document.querySelector('.friends').addEventListener('click', () => {
         window.location.href = 'friends.html';
@@ -235,6 +230,7 @@
       document.querySelector('.rate').addEventListener('click', () => {
         window.location.href = 'feedback.html';
       });
+
     </script>
   </body>
 </html>
